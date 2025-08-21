@@ -4,11 +4,13 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>f7dc1f39-57de-4c6f-9537-95b8f2f90550</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.19" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.1" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="System.IO.Ports" Version="8.0.0" />
@@ -23,6 +25,7 @@
 
   <ItemGroup>
     <Folder Include="Data\Pcm" />
+    <Folder Include="logs\" />
   </ItemGroup>
 
 </Project>

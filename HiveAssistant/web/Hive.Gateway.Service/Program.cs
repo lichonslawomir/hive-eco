@@ -5,6 +5,7 @@ using Core.Infra.Schedule.Extensioms.DependencyInjection;
 using Hive.Gateway.Service.Components;
 using Hive.Gateway.Service.Extensions;
 using Hive.Gateway.Service.Models;
+using Hive.Gateway.Service.OsUtils;
 
 namespace Hive.Gateway.Service
 {
@@ -13,6 +14,10 @@ namespace Hive.Gateway.Service
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Host.UseWindowsService(opt =>
+            {
+                opt.ServiceName = "Hive.Gateway.Service";
+            });
 
             builder.Services.AddLogging(logbuilder =>
             {
@@ -23,6 +28,8 @@ namespace Hive.Gateway.Service
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            //builder.Services.AddHostedService<FirewallService>();
 
             builder.Services.AddAppServices()
                 .AddInfrastructureServices(builder.Configuration)

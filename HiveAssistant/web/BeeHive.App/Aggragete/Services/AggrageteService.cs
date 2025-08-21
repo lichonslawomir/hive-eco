@@ -86,9 +86,9 @@ internal class AggrageteService(IBeeHiveDbContext dbContext) : IAggrageteService
                 {
                     timeAggregateSeriesItem.UpdateData(timeAggregateSeriesData,
                         stats?.Cnt ?? 0,
-                        stats?.Max ?? float.NaN,
-                        stats?.Min ?? float.NaN,
-                        stats?.Avg ?? float.NaN,
+                        stats?.Max,
+                        stats?.Min,
+                        stats?.Avg,
                         med);
                 }
             }

@@ -10,7 +10,7 @@ public class AggrageteShortTimeSeriesJob(IAggrageteService aggrageteService, IWo
     public static ExecuteConfig DefaultExecuteConfig = new()
     {
         RunOnStart = true,
-        Cron = "* * * * *",
+        Cron = "5 * * * * *",
         Queue = nameof(Aggragete),
     };
 

@@ -92,8 +92,8 @@
         else
         {
             var hiveIds = _hives.Select(x => x.Id).ToArray();
-            tt = await HiveService.GetHivesAggregateData(BeeHive.Domain.Data.TimeSeriesKind.Temperature, period, hiveIds, startDate, endDate);
-            hh = await HiveService.GetHivesAggregateData(BeeHive.Domain.Data.TimeSeriesKind.Humidity, period, hiveIds, startDate, endDate);
+            tt = await HiveService.GetHivesAggregateData(BeeHive.Domain.Data.TimeSeriesKind.BuzzFrequency, period, hiveIds, startDate, endDate);
+            hh = await HiveService.GetHivesAggregateData(BeeHive.Domain.Data.TimeSeriesKind.BuzzAmplitudeRms, period, hiveIds, startDate, endDate);
         }
 
         chartConfig1.Data.Labels.Clear();

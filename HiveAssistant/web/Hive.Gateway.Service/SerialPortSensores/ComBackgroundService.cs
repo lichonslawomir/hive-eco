@@ -15,9 +15,11 @@ public class ComBackgroundService(IOptions<ComPortsOptions> options, ISensorBuff
     private const uint ES_SYSTEM_REQUIRED = 0x00000001;
 
     private ConcurrentDictionary<string, Task> _ports = new();
+    private readonly ILogger _logger = loggerFactory.CreateLogger<ComBackgroundService>();
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation($"ExecuteAsync: {nameof(ComBackgroundService)}");
         SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 
         do

@@ -10,6 +10,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddScoped<IAggrageteService, AggrageteService>()
-            .AddScoped<ISensorService, SensorService>();
+            .AddScoped<ISensorService, SensorService>()
+            .AddScoped<IAudioService, AudioService>();
     }
 }

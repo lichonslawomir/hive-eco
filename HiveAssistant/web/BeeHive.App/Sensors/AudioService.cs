@@ -36,13 +36,7 @@ internal class AudioService : BaseDataService, IAudioService
 
             var (hive, newHive) = await GetHive(hievKey, beeGarden, newBeeGarden);
 
-            var audioFile = newHive ? null : await _beeHiveDbContext.AudioFiles.FirstOrDefaultAsync(x => x.HiveId == hive.Id && x.Complete == false);
-            if (audioFile is not null)
-            {
-                var audioFileTimestamp = _timeZoneInfo.ToDateTimeOffset(audioFile.Timestamp);
-                //audioFileTimestamp.AdjustTo()
-            }
-
+            AudioFile? audioFile = null;
             FileStream? fileStream = null;
             foreach (var d in kv.OrderBy(x => x.timestamp))
             {
@@ -60,11 +54,16 @@ internal class AudioService : BaseDataService, IAudioService
                         var audioFilePath = _storageManager.GetAudioFilePath(hievKey, audioFile.FileName);
                         byte[] data = File.ReadAllBytes(audioFilePath);
                         var (durationSec, frequency, amplitudePeak, amplitudeRms, amplitudeMav) = data.GetAdioStreamStats(audioFile.SampleRate, audioFile.Channels, audioFile.BitsPerSample);
-                        hive.UpdateAudioFile(audioFile, true, durationSec, frequency, amplitudePeak, amplitudeRms, amplitudeMav);
+                        hive.UpdateAudioFile(audioFile, false, durationSec, frequency, amplitudePeak, amplitudeRms, amplitudeMav);
                     }
                     var ts = tsOffset.AdjustTo(AggregationPeriod.Min5).UtcDateTime;
-                    audioFile = hive.CreateAudioFile(ts, CreateFileName(ts, hievKey, holdingKey, beeGardenKey));
-                    _beeHiveDbContext.AudioFiles.Add(audioFile);
+                    audioFile = newHive ? null : await _beeHiveDbContext.AudioFiles.FirstOrDefaultAsync(x => x.HiveId == hive.Id && x.Timestamp == ts);
+
+                    if(audioFile is null)
+                    {
+                        audioFile = hive.CreateAudioFile(ts, CreateFileName(ts, hievKey, holdingKey, beeGardenKey));
+                        _beeHiveDbContext.AudioFiles.Add(audioFile);
+                    }
                 }
                 if (fileStream is null)
                 {

@@ -10,6 +10,8 @@ internal class ScheduleBackgroundService(IServiceProvider serviceProvider, JobCo
 {
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        logger.LogInformation($"ExecuteAsync: {nameof(ScheduleBackgroundService)}");
+
         var jobLoopTasks = jobCollection.Jobs
             .GroupBy(x => jobCollection.GetJobConfig(x).Queue)
             .Select(k => Task.Factory.StartNew(

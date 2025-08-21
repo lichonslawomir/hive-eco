@@ -37,8 +37,16 @@ public record ExecuteConfig()
 
     public CronExpression? GetCronExpression()
     {
-        if (Cron is not null)
-            return _cronExpression ??= CronExpression.Parse(Cron);
+        try
+        {
+
+            if (Cron is not null)
+                return _cronExpression ??= CronExpression.Parse(Cron, CronFormat.IncludeSeconds);
+        }
+        catch (Exception ex)
+        {
+            throw new ArgumentException(Cron, ex);
+        }
         return null;
     }
 }
