@@ -1,0 +1,121 @@
+/**
+ * Pin Assignments (change as needed):
+ * INMP441: VCC=3.3V, GND=GND, SCK=D14(GPIO14), WS=D15(GPIO15), SD=D32(GPIO32), L/R=GND
+ * DHT22: VCC=3.3V, GND=GND, DATA=D4(GPIO4), 4.7kΩ pull-up
+ */
+
+#include <Arduino.h>
+#include <DHT.h>
+#include <base64.h>
+
+#include "init.h"
+
+// ---- Pin definitions ----
+#define LED_PIN 2
+#define DHTPIN 4
+#define DHTTYPE DHT22
+
+
+
+// ---- DHT22 Setup ----
+DHT dht(DHTPIN, DHTTYPE);
+
+
+// ---- INMP441/I2S Setup ----
+#define SAMPLE_RATE     16000
+#define SAMPLE_BITS     32
+#define CHANNELS        1
+
+const size_t audioSeconds = 1;
+const size_t samplesPerSecond = SAMPLE_RATE * CHANNELS;
+const size_t totalSamples = 512;//audioSeconds * samplesPerSecond;
+const size_t bufferSize = totalSamples * (SAMPLE_BITS/8);
+
+bool toogle = false;
+unsigned long lastSend = 0;
+const unsigned long sendInterval = audioSeconds * 1000UL; // 5 sek in ms
+
+int32_t *audioBuffer = nullptr;
+size_t audioIndex = 0;
+
+void setup() {
+  pinMode(LED_PIN, OUTPUT);
+  Serial.begin(4800);
+  dht.begin();
+    
+  auto res = i2s_install();
+  res = i2s_setpin();
+
+  // Allocate audio buffer
+  audioBuffer = (int32_t*)malloc(bufferSize);
+  if (!audioBuffer) {
+    Serial.println("Failed to allocate audio buffer!");
+    while (1);
+  }
+  audioIndex = 0;
+  lastSend = millis();
+  Serial.println("ESP32 INMP441 + DHT22 logger started.");
+}
+
+void loop() {
+  if (millis() - lastSend >= 1000) {
+    toogle = !toogle;
+    //digitalWrite(LED_PIN, HIGH);
+    digitalWrite(LED_PIN, toogle ? HIGH : LOW);
+    lastSend = millis();
+      
+    //char buf[64];
+    //sprintf(buf, "%d", bufferSize);
+    //Serial.println(buf);
+  }
+  
+  // 1. Read audio sample and store to buffer
+  size_t bytesRead = 0;
+  int32_t sample = 0;
+  i2s_read(I2S_NUM_0, (void*)&sample, sizeof(sample), &bytesRead, portMAX_DELAY);
+
+  //char buf[64];
+  //sprintf(buf, "%d - %d, %d", bytesRead, sample, totalSamples);
+  //Serial.println(buf);
+
+  if (bytesRead == sizeof(sample)) {
+    audioBuffer[audioIndex++] = sample;
+  }
+  if (audioIndex >= totalSamples)
+  {
+    Serial.println("AUDIO_BEGIN");
+    uint8_t bytes[audioIndex * sizeof(int32_t)];
+    for (size_t i = 0; i < audioIndex; ++i) {
+        bytes[i*4 + 0] = (audioBuffer[i] >> 24) & 0xFF;
+        bytes[i*4 + 1] = (audioBuffer[i] >> 16) & 0xFF;
+        bytes[i*4 + 2] = (audioBuffer[i] >> 8) & 0xFF;
+        bytes[i*4 + 3] = audioBuffer[i] & 0xFF;
+    }
+    String b64 = base64::encode(bytes, sizeof(bytes));
+    Serial.println(b64);
+    Serial.println("AUDIO_END");
+    audioIndex = 0;
+  }
+  /*
+  // 2. Every 5 minutes: send DHT22 and audio buffer
+  if (millis() - lastSend >= sendInterval || audioIndex >= totalSamples) {
+    
+    // --- DHT22 read ---
+    float h = dht.readHumidity();
+    float t = dht.readTemperature();
+    Serial.print("DHT22: ");
+    if (isnan(h) || isnan(t)) {
+      Serial.println("Failed to read from DHT22");
+    } else {
+      Serial.print("Temp: "); Serial.print(t, 1); Serial.print(" C, ");
+      Serial.print("Humidity: "); Serial.print(h, 1); Serial.println(" %");
+    }
+
+    // --- Audio send ---
+    
+
+    // Reset for next cycle
+    audioIndex = 0;
+    lastSend = millis();
+  }*/
+}
