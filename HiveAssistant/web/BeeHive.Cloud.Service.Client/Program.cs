@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
-namespace BlazorApp1.Client
+namespace BeeHive.Cloud.Service.Client
 {
     internal class Program
     {

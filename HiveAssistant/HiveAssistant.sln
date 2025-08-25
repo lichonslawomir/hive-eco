@@ -27,15 +27,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Contract", "web\Core.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeHive.Contract", "web\BeeHive.Contract\BeeHive.Contract.csproj", "{914639BD-31F0-4109-A112-E1BD1501D2C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp1", "web1\BlazorApp1\BlazorApp1\BlazorApp1.csproj", "{715DC7D4-6836-49F2-AC69-405B572B6BEC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp1.Client", "web1\BlazorApp1\BlazorApp1.Client\BlazorApp1.Client.csproj", "{F84B5745-A3DF-46CE-92EE-CE0B43F866FF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp2", "web1\BlazorApp2\BlazorApp2.csproj", "{CCEFE171-9897-4AA2-BF06-BE3820F635B9}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{21BC69C9-0EBA-4F18-B1B8-9204581015EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeHive.Domain.Tests", "web\BeeHive.Domain.Tests\BeeHive.Domain.Tests.csproj", "{441BCCC3-5187-EB79-D101-44A956BAF286}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cloud", "Cloud", "{3F64D3D1-547A-479B-B549-E86C1C5611BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,18 +79,6 @@ Global
 		{914639BD-31F0-4109-A112-E1BD1501D2C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{914639BD-31F0-4109-A112-E1BD1501D2C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{914639BD-31F0-4109-A112-E1BD1501D2C5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{715DC7D4-6836-49F2-AC69-405B572B6BEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{715DC7D4-6836-49F2-AC69-405B572B6BEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{715DC7D4-6836-49F2-AC69-405B572B6BEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{715DC7D4-6836-49F2-AC69-405B572B6BEC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F84B5745-A3DF-46CE-92EE-CE0B43F866FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F84B5745-A3DF-46CE-92EE-CE0B43F866FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F84B5745-A3DF-46CE-92EE-CE0B43F866FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F84B5745-A3DF-46CE-92EE-CE0B43F866FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CCEFE171-9897-4AA2-BF06-BE3820F635B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CCEFE171-9897-4AA2-BF06-BE3820F635B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CCEFE171-9897-4AA2-BF06-BE3820F635B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CCEFE171-9897-4AA2-BF06-BE3820F635B9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{441BCCC3-5187-EB79-D101-44A956BAF286}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{441BCCC3-5187-EB79-D101-44A956BAF286}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{441BCCC3-5187-EB79-D101-44A956BAF286}.Release|Any CPU.ActiveCfg = Release|Any CPU

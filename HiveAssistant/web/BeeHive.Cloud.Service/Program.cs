@@ -1,7 +1,7 @@
-using BlazorApp1.Client.Pages;
-using BlazorApp1.Components;
+using BeeHive.Cloud.Service.Client.Pages;
+using BeeHive.Cloud.Service.Components;
 
-namespace BlazorApp1
+namespace BeeHive.Cloud.Service
 {
     public class Program
     {
