@@ -1,4 +1,5 @@
-﻿using Core.App.Expressions;
+﻿using System.Linq.Expressions;
+using Core.App.Expressions;
 using Core.App.Repositories;
 using Core.App.Repositories.Include;
 using Core.Contract.Queries.Pagination;
@@ -46,7 +47,7 @@ public class GenericRepository<T, TDbContext>(TDbContext dbContext) : IGenericRe
 
         query = ApplyOrdering(query, specification);
 
-        return await query.Select(specification.Selector()).ToListAsync(cancellationToken: cancellationToken);
+        return await query.Select(specification.Selector).ToListAsync(cancellationToken: cancellationToken);
     }
 
     public async Task<PageResult<T>> GetPagedAsync(IPagedSpecification<T> specification, CancellationToken cancellationToken)
@@ -92,7 +93,7 @@ public class GenericRepository<T, TDbContext>(TDbContext dbContext) : IGenericRe
         }
         query = ApplyOrderingAndPaging(query, specification, specification.Skip, specification.Take);
 
-        var items = await query.Select(specification.Selector()).ToListAsync(cancellationToken: cancellationToken);
+        var items = await query.Select(specification.Selector).ToListAsync(cancellationToken: cancellationToken);
 
         return new PageResult<TDto>(items, total ?? items.Count, specification.Skip ?? 0, specification.Take);
     }
@@ -165,6 +166,14 @@ public class GenericRepository<T, TKey, TDbContext> : GenericRepository<T, TDbCo
         IQueryable<T> query = includes.Aggregate<IncludeTreeExpression<T>, IQueryable<T>>(DbSet, (current, include) => current.ApplyInclude(include));
         return await query
             .Where(x => x.Id!.Equals(id))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<TDto?> GetByIdAsync<TDto>(TKey id, Expression<Func<T, TDto>> mapExpression, CancellationToken cancellationToken)
+    {
+        return await DbSet
+            .Where(x => x.Id!.Equals(id))
+            .Select(mapExpression)
             .FirstOrDefaultAsync(cancellationToken);
     }
 }

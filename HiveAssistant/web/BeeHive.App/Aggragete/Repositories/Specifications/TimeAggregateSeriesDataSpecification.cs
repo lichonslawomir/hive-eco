@@ -24,7 +24,7 @@ public class TimeAggregateSeriesDataSpecification : IMapSpecification<TimeAggreg
 
     public bool Distinct => false;
 
-    public IEnumerable<IFilter<TimeAggregateSeriesData>>? AsEnumerableFilters()
+    public IEnumerable<IFilter<TimeAggregateSeriesData>> AsEnumerableFilters()
     {
         if (HiveId.HasValue)
             yield return new TimeAggregateSeriesDataHiveIdFilter(HiveId.Value);
@@ -47,8 +47,5 @@ public class TimeAggregateSeriesDataSpecification : IMapSpecification<TimeAggreg
         return new TimeAggregateSeriesDataTimestampOrdering(true);
     }
 
-    public Expression<Func<TimeAggregateSeriesData, TimeAggregateSeriesDataModel>> Selector()
-    {
-        return MappingExtensions.Map;
-    }
+    public Expression<Func<TimeAggregateSeriesData, TimeAggregateSeriesDataModel>> Selector => MappingExtensions.Map;
 }

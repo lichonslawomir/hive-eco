@@ -86,6 +86,9 @@ namespace BeeHive.Infra.DataAccess.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("CreatedOrUpdatedDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<float?>("MaxValue")
                         .HasColumnType("REAL");
 
@@ -95,7 +98,12 @@ namespace BeeHive.Infra.DataAccess.Migrations
                     b.Property<float?>("MinValue")
                         .HasColumnType("REAL");
 
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("TimeAggregateSeriesId", "Timestamp");
+
+                    b.HasIndex("CreatedOrUpdatedDate");
 
                     b.ToTable("TimeAggregateSeriesData");
                 });
@@ -146,6 +154,22 @@ namespace BeeHive.Infra.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("BeeGardens");
+                });
+
+            modelBuilder.Entity("BeeHive.Domain.BeeGardens.BeeGardenImportState", b =>
+                {
+                    b.Property<int>("BeeGardenId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ExportEntity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("LastCreatedOrUpdatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("BeeGardenId", "ExportEntity");
+
+                    b.ToTable("BeeGardenImportStates");
                 });
 
             modelBuilder.Entity("BeeHive.Domain.Data.TimeSeries", b =>
@@ -258,6 +282,9 @@ namespace BeeHive.Infra.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("CreatedOrUpdatedDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -280,10 +307,62 @@ namespace BeeHive.Infra.DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedOrUpdatedDate");
+
                     b.HasIndex("BeeGardenId", "UniqueKey")
                         .IsUnique();
 
                     b.ToTable("Hives");
+                });
+
+            modelBuilder.Entity("BeeHive.Domain.Hives.HiveMedia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedOrUpdatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("HiveId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LocalPath")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MediaType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("OrginalId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("TEXT");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedOrUpdatedDate");
+
+                    b.HasIndex("HiveId", "OrginalId");
+
+                    b.ToTable("HiveMedia");
                 });
 
             modelBuilder.Entity("BeeHive.Domain.Holdings.Holding", b =>
@@ -370,6 +449,17 @@ namespace BeeHive.Infra.DataAccess.Migrations
                     b.Navigation("Holding");
                 });
 
+            modelBuilder.Entity("BeeHive.Domain.BeeGardens.BeeGardenImportState", b =>
+                {
+                    b.HasOne("BeeHive.Domain.BeeGardens.BeeGarden", "BeeGarden")
+                        .WithMany()
+                        .HasForeignKey("BeeGardenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BeeGarden");
+                });
+
             modelBuilder.Entity("BeeHive.Domain.Data.TimeSeries", b =>
                 {
                     b.HasOne("BeeHive.Domain.Hives.Hive", "Hive")
@@ -414,6 +504,17 @@ namespace BeeHive.Infra.DataAccess.Migrations
                     b.Navigation("BeeGarden");
                 });
 
+            modelBuilder.Entity("BeeHive.Domain.Hives.HiveMedia", b =>
+                {
+                    b.HasOne("BeeHive.Domain.Hives.Hive", "Hive")
+                        .WithMany("Media")
+                        .HasForeignKey("HiveId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hive");
+                });
+
             modelBuilder.Entity("BeeHive.Domain.Aggregate.TimeAggregateSeries", b =>
                 {
                     b.Navigation("AudioStats");
@@ -424,6 +525,11 @@ namespace BeeHive.Infra.DataAccess.Migrations
             modelBuilder.Entity("BeeHive.Domain.Data.TimeSeries", b =>
                 {
                     b.Navigation("Data");
+                });
+
+            modelBuilder.Entity("BeeHive.Domain.Hives.Hive", b =>
+                {
+                    b.Navigation("Media");
                 });
 #pragma warning restore 612, 618
         }

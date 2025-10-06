@@ -1,4 +1,5 @@
 ﻿using BeeHive.Domain.Aggregate;
+using Core.Infra.DataAccess.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,6 +9,8 @@ internal sealed class TimeAggregateSeriesDataConfiguration : IEntityTypeConfigur
 {
     public void Configure(EntityTypeBuilder<TimeAggregateSeriesData> builder)
     {
+        builder.ConfigureSynchronizable();
+
         builder.HasKey(e => new { e.TimeAggregateSeriesId, e.Timestamp });
 
         builder.HasOne(e => e.TimeAggregateSeries)

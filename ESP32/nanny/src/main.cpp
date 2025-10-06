@@ -12,6 +12,8 @@
 #define I2S_WS        15
 #define I2S_SD        32
 #define I2S_SCK       14
+//GND - BLACK
+//VDD - BLUE
 
 #define SERIAL_BAUD   921600
 #define BUFFER_SIZE   1024 // bytes (number of samples per chunk)
@@ -23,7 +25,6 @@ void setupI2S() {
     .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
     .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
     .communication_format = I2S_COMM_FORMAT_STAND_I2S,//I2S_COMM_FORMAT_I2S_MSB,
-    .intr_alloc_flags = 0,
     .dma_buf_count = 4,
     .dma_buf_len = 1024,
     .use_apll = false,
@@ -52,7 +53,7 @@ const unsigned long sendIntervalMillis = 1000 * 10;
 static uint8_t buffer[BUFFER_SIZE];
 size_t bytes_read = 0;
 char cmd[6];
-const char hiveId = '1';
+const char hiveId = '2';
 
 void setup() {
   pinMode(LED_PIN, OUTPUT);

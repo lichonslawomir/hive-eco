@@ -21,7 +21,7 @@ public class TimeSeriesHivesDataSpecification : IMapSpecification<TimeSeriesData
 
     public bool Distinct => false;
 
-    public IEnumerable<IFilter<TimeSeriesData>>? AsEnumerableFilters()
+    public IEnumerable<IFilter<TimeSeriesData>> AsEnumerableFilters()
     {
         if (HiveIds is not null)
             yield return new TimeSeriesDataHiveIdsFilter(HiveIds);
@@ -41,8 +41,5 @@ public class TimeSeriesHivesDataSpecification : IMapSpecification<TimeSeriesData
         return new TimeSeriesDataTimestampAndHiveIdOrdering();
     }
 
-    public Expression<Func<TimeSeriesData, TimeSeriesDataModelEx>> Selector()
-    {
-        return MappingExtensions.MapEx;
-    }
+    public Expression<Func<TimeSeriesData, TimeSeriesDataModelEx>> Selector => MappingExtensions.MapEx;
 }

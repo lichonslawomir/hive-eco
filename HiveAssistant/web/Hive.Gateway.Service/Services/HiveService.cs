@@ -6,7 +6,7 @@ using BeeHive.App.Hives.Repositories;
 using BeeHive.App.Hives.Repositories.Specifications;
 using BeeHive.Contract.Aggregate.Models;
 using BeeHive.Contract.Data.Models;
-using BeeHive.Contract.Hives;
+using BeeHive.Contract.Hives.Models;
 using BeeHive.Domain.Aggregate;
 using BeeHive.Domain.Data;
 using Hive.Gateway.Service.Models;
@@ -17,6 +17,8 @@ namespace Hive.Gateway.Service.Services;
 public interface IHiveService
 {
     Task<IList<HiveDto>> ListHives(CancellationToken cancellationToken = default);
+
+    Task<HiveDto> GetHive(int id, CancellationToken cancellationToken = default);
 
     Task<IList<TimeSeriesDataModel>> GetHiveData(int hiveId,
             TimeSeriesKind kind,
@@ -52,12 +54,17 @@ public class HiveService(IOptions<BeeGardenConfig> beeGardenConfig,
 {
     public async Task<IList<HiveDto>> ListHives(CancellationToken cancellationToken = default)
     {
-        var spec = new HiveSpecification()
+        var spec = new HiveDtoSpecification()
         {
             BeeGarden = (beeGardenConfig.Value.BeeGardenKey, beeGardenConfig.Value.HoldingKey)
         };
 
         return await hiveRepository.GetAsync<HiveDto>(spec, cancellationToken);
+    }
+
+    public async Task<HiveDto> GetHive(int id, CancellationToken cancellationToken = default)
+    {
+        return await hiveRepository.GetByIdAsync<HiveDto>(id, HiveMappingExtensions.Map, cancellationToken);
     }
 
     public async Task<IList<TimeSeriesDataModel>> GetHiveData(int hiveId,

@@ -46,3 +46,15 @@ public class EntityConfiguration<TEntity, TId>
         ConfigureUpdateAudited<TAuditableEntity, TUserId>(builder);
     }
 }
+
+public static class EntityConfigurationExtension
+{
+    public static void ConfigureSynchronizable<TSynchronizableEntity>(this EntityTypeBuilder<TSynchronizableEntity> builder)
+        where TSynchronizableEntity : class, ISynchronizableEntity
+    {
+        builder.Property(e => e.CreatedOrUpdatedDate)
+            .IsRequired();
+
+        builder.HasIndex(e => e.CreatedOrUpdatedDate);
+    }
+}

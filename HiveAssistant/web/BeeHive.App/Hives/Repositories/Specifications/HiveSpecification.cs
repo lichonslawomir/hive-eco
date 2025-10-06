@@ -1,34 +1,44 @@
 ﻿using BeeHive.App.Hives.Repositories.Specifications.Filter;
 using BeeHive.App.Hives.Repositories.Specifications.Order;
-using BeeHive.Contract.Hives;
 using BeeHive.Domain.Hives;
 using Core.App.Repositories;
 using Core.App.Repositories.Filter;
 using Core.App.Repositories.Order;
-using System.Linq.Expressions;
 
 namespace BeeHive.App.Hives.Repositories.Specifications;
 
-public class HiveSpecification : IMapSpecification<Hive, HiveDto>
+public enum HiveOrdering
+{
+    IdAsc,
+    CreatedOrUpdatedDateAsc
+}
+
+public class HiveSpecification : ISpecification<Hive>
 {
     public (string Key, string HoldingKey)? BeeGarden;
 
-    public bool Distinct => false;
+    public HiveOrdering Ordering = HiveOrdering.IdAsc;
 
-    public IEnumerable<IFilter<Hive>>? AsEnumerableFilters()
+    public IEnumerable<IFilter<Hive>> AsEnumerableFilters()
     {
         if (BeeGarden.HasValue)
             yield return new HiveBeeGardenFilter(BeeGarden.Value.HoldingKey, BeeGarden.Value.Key);
+
         yield break;
     }
 
     public IOrder<Hive>? OrderBy()
     {
-        return new HiveIdOrder(true);
-    }
+        switch (Ordering)
+        {
+            case HiveOrdering.IdAsc:
+                return new HiveIdOrder(true);
 
-    public Expression<Func<Hive, HiveDto>> Selector()
-    {
-        return MappingExtensions.Map;
+            case HiveOrdering.CreatedOrUpdatedDateAsc:
+                return new CreatedOrUpdatedDateOrder<Hive>(true);
+
+            default:
+                throw new NotImplementedException($"{Ordering}");
+        }
     }
 }

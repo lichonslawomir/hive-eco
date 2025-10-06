@@ -22,7 +22,11 @@ public sealed class BeeHiveDbContext : BaseDbContextManuallyVersioned<BeeHiveDbC
 
     public DbSet<BeeGarden> BeeGardens { get; set; }
 
+    public DbSet<BeeGardenImportState> BeeGardenImportStates { get; set; }
+
     public DbSet<Hive> Hives { get; set; }
+
+    public DbSet<HiveMedia> HiveMedia { get; set; }
 
     public DbSet<AudioFile> AudioFiles { get; set; }
 
@@ -34,7 +38,7 @@ public sealed class BeeHiveDbContext : BaseDbContextManuallyVersioned<BeeHiveDbC
 
     public DbSet<TimeAggregateSeriesData> TimeAggregateSeriesData { get; set; }
 
-    public DbSet<AudioAggregateStatsData> AudioAggregateStatsData { get; }
+    public DbSet<AudioAggregateStatsData> AudioAggregateStatsData { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -18,12 +18,12 @@ public class SensoreJob(
         MaxExecuteTime = TimeSpan.FromMinutes(5)
     };
 
-    public async Task Execute(CancellationToken stoppingToken)
+    public async Task Execute(CancellationToken cancellationToken)
     {
-        var data = await sensorBuffor.ListData(stoppingToken);
-        await sensorService.SaveData(beeGardenConfig.Value.HoldingKey, beeGardenConfig.Value.BeeGardenKey, data);
+        var data = await sensorBuffor.ListData(cancellationToken);
+        await sensorService.SaveData(beeGardenConfig.Value.HoldingKey, beeGardenConfig.Value.BeeGardenKey, data, cancellationToken);
 
-        var audio = await sensorBuffor.ListAudio(stoppingToken);
-        await audioService.SaveData(beeGardenConfig.Value.HoldingKey, beeGardenConfig.Value.BeeGardenKey, audio);
+        var audio = await sensorBuffor.ListAudio(cancellationToken);
+        await audioService.SaveData(beeGardenConfig.Value.HoldingKey, beeGardenConfig.Value.BeeGardenKey, audio, cancellationToken);
     }
 }

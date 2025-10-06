@@ -5,7 +5,6 @@ using Core.Infra.Schedule.Extensioms.DependencyInjection;
 using Hive.Gateway.Service.Components;
 using Hive.Gateway.Service.Extensions;
 using Hive.Gateway.Service.Models;
-using Hive.Gateway.Service.OsUtils;
 
 namespace Hive.Gateway.Service
 {
@@ -28,8 +27,6 @@ namespace Hive.Gateway.Service
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
-            //builder.Services.AddHostedService<FirewallService>();
 
             builder.Services.AddAppServices()
                 .AddInfrastructureServices(builder.Configuration)
@@ -62,8 +59,7 @@ namespace Hive.Gateway.Service
             app.MapControllers();
 
             app.MapRazorComponents<App>()
-                .AddInteractiveServerRenderMode()
-                .AddInteractiveWebAssemblyRenderMode(); ;
+                .AddInteractiveServerRenderMode();
 
             app.Run();
         }

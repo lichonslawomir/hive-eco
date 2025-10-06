@@ -11,7 +11,7 @@ public abstract class BaseDbContextManuallyVersioned<TDbContext, TUserId> : Base
     {
     }
 
-    protected override void OnBeforeSaveChanges(IList<EntityEntry> entityEntries)
+    protected override void OnBeforeSaveChanges(IEnumerable<EntityEntry> entityEntries)
     {
         base.OnBeforeSaveChanges(entityEntries);
         foreach (var entityEntry in entityEntries)

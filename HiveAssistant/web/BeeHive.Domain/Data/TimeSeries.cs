@@ -4,7 +4,7 @@ using Core.Domain.Aggregates;
 
 namespace BeeHive.Domain.Data;
 
-public class TimeSeries : AggregateRoot<int>
+public sealed class TimeSeries : AggregateRoot<int>
 {
     private readonly List<TimeSeriesData> _data = new();
 
@@ -21,7 +21,7 @@ public class TimeSeries : AggregateRoot<int>
         Kind = kind;
     }
 
-    protected TimeSeries(int id)
+    private TimeSeries(int id)
         : base(id)
     {
     }
@@ -32,5 +32,14 @@ public class TimeSeries : AggregateRoot<int>
         _data.AddRange(data.Select(x => new TimeSeriesData(this, x.timestamp, x.vale)));
 
         PublishEvent(new AddTimeSeriesDataEvent(this, _data.Count - count));
+    }
+
+    public TimeSeriesData AddData(DateTime timestamp, float vale)
+    {
+        var d = new TimeSeriesData(this, timestamp, vale);
+        _data.Add(d);
+
+        PublishEvent(new AddTimeSeriesDataEvent(this, 1));
+        return d;
     }
 }

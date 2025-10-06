@@ -4,17 +4,17 @@ using Core.Domain.Aggregates;
 
 namespace BeeHive.Domain.BeeGardens;
 
-public class BeeGarden : AuditableAggregateRoot<int, string>
+public sealed class BeeGarden : AuditableAggregateRoot<int, string>
 {
-    public string UniqueKey { get; protected set; }
-    public string Name { get; protected set; }
+    public string UniqueKey { get; private set; }
+    public string Name { get; private set; }
 
-    public string TimeZone { get; protected set; }
+    public string TimeZone { get; private set; }
 
-    public Holding Holding { get; protected set; } = null!;
-    public int HoldingId { get; protected set; }
+    public Holding Holding { get; private set; } = null!;
+    public int HoldingId { get; private set; }
 
-    protected BeeGarden(string name, string uniqueKey, string timeZone)
+    private BeeGarden(string name, string uniqueKey, string timeZone)
     {
         Name = name;
         UniqueKey = uniqueKey;
@@ -31,5 +31,11 @@ public class BeeGarden : AuditableAggregateRoot<int, string>
         beeGarden.PublishEvent(new NewBeeGardenEvent(beeGarden));
 
         return beeGarden;
+    }
+
+    public void Update(string name, string timeZone)
+    {
+        this.TimeZone = timeZone;
+        this.Name = name;
     }
 }

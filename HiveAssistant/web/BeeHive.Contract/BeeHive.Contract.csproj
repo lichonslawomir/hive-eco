@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BeeHive.Domain\BeeHive.Domain.csproj" />
+    <ProjectReference Include="..\Core.Contract\Core.Contract.csproj" />
+  </ItemGroup>
+
 </Project>

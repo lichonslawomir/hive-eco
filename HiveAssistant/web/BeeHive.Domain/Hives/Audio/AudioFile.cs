@@ -1,6 +1,6 @@
 ﻿namespace BeeHive.Domain.Hives.Audio;
 
-public class AudioFile
+public sealed class AudioFile
 {
     public Hive Hive { get; private set; } = null!;
     public int HiveId { get; private set; }
@@ -32,7 +32,7 @@ public class AudioFile
         BitsPerSample = hive.AudioSensorBitsPerSample;
     }
 
-    protected AudioFile()
+    private AudioFile()
     {
     }
 }

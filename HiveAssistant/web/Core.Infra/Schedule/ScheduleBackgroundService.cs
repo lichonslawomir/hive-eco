@@ -1,4 +1,5 @@
-﻿using Core.Contract.Schedule;
+﻿using Core.App;
+using Core.Contract.Schedule;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -6,7 +7,11 @@ using System.Globalization;
 
 namespace Core.Infra.Schedule;
 
-internal class ScheduleBackgroundService(IServiceProvider serviceProvider, JobCollection jobCollection, IScheduleDateTimeProvider scheduleDateTimeProvider, ILogger<ScheduleBackgroundService> logger) : BackgroundService
+internal class ScheduleBackgroundService(IServiceProvider serviceProvider,
+    JobCollection jobCollection,
+    IScheduleDateTimeProvider scheduleDateTimeProvider,
+    ILogger<ScheduleBackgroundService> logger)
+    : BackgroundService
 {
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -54,6 +59,7 @@ internal class ScheduleBackgroundService(IServiceProvider serviceProvider, JobCo
 
     public async Task RunJob(IServiceProvider scopeProvider, Type jobType, CancellationToken stoppingToken)
     {
+        scopeProvider.GetRequiredService<IWorkContext>().SetExecutionType(ExecutionType.Job);
         CultureInfo.CurrentCulture = new CultureInfo(jobCollection.Culture);
         CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture;
 

@@ -1,0 +1,76 @@
+﻿@page "/hive/{hiveId:int}"
+
+@using BeeHive.Contract.Hives.Commands
+@using Hive.Gateway.Service.Components.Controls
+
+@rendermode InteractiveServer
+
+@inject IHiveService HiveService
+@inject IHiveMediaService HiveMediaService
+@inject ICommandExecuter CommandExecuter
+@inject NavigationManager Navigation
+
+<h3>@_hive.Name</h3>
+
+<InputFile OnChange="OnInputFileChange" multiple accept="image/*" />
+
+<div class="gallery">
+    @foreach (var m in _hiveMedias)
+    {
+        <ImagePanel Media="@m" OnEditTitle="EditTitle" OnDelete="Delete" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int HiveId { get; set; }
+
+    private IList<HiveMediaDto>
+    _hiveMedias = new List<HiveMediaDto>();
+    private HiveDto _hive;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hive = await HiveService.GetHive(HiveId);
+        if (_hive.Id == default)
+        {
+            Navigation.NavigateTo("/");
+            return;
+        }
+        _hiveMedias = await HiveMediaService.ListMedias(HiveId);
+    }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
+            var newHive = await HiveMediaService.SaveMedia(_hive.Id, file.Name, stream, CancellationToken.None);
+            _hiveMedias.Add(newHive);
+        }
+    }
+
+    private async Task EditTitle((HiveMediaDto mediaDto, string newTitle) arg)
+    {
+        await CommandExecuter.ExecuteCommand<UpdateHiveMediaCommand>(new UpdateHiveMediaCommand()
+        {
+            Id = arg.mediaDto.Id,
+            Data = new HiveMediaUpdateModel()
+            {
+                Title = arg.newTitle
+            }
+        }, CancellationToken.None);
+
+        arg.mediaDto.Title = arg.newTitle;
+    }
+
+    private async Task Delete(HiveMediaDto mediaDto)
+    {
+        await CommandExecuter.ExecuteCommand<DeleteHiveMediaCommand>(new DeleteHiveMediaCommand()
+        {
+            Id = mediaDto.Id
+        }, CancellationToken.None);
+
+        _hiveMedias.Remove(mediaDto);
+    }
+}

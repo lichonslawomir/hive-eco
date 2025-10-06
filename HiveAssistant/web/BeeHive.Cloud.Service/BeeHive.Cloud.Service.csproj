@@ -7,8 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BeeHive.Cloud.Service.Client\BeeHive.Cloud.Service.Client.csproj" />
+    <PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.19" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\BeeHive.App\BeeHive.App.csproj" />
+    <ProjectReference Include="..\BeeHive.Cloud.Service.Client\BeeHive.Cloud.Service.Client.csproj" />
+    <ProjectReference Include="..\BeeHive.Infra\BeeHive.Infra.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Pcm" />
+    <Folder Include="logs\" />
   </ItemGroup>
 
 </Project>
