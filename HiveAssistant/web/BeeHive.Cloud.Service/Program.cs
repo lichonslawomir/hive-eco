@@ -1,5 +1,7 @@
-using BeeHive.Cloud.Service.Client.Pages;
+using BeeHive.App.Extensions.DependencyInjection;
 using BeeHive.Cloud.Service.Components;
+using BeeHive.Infra.Extensions.DependencyInjection;
+using Core.Infra.Backgrounds;
 
 namespace BeeHive.Cloud.Service
 {
@@ -9,7 +11,22 @@ namespace BeeHive.Cloud.Service
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddLogging(logbuilder =>
+            {
+                logbuilder.AddConsole();
+                logbuilder.AddFile(builder.Configuration.GetSection("FileLogging"));
+            });
+
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
+            builder.Services.AddAppServices()
+                .AddInfrastructureServices(builder.Configuration)
+                .AddHostedService<StartupService>();
+
             // Add services to the container.
+            builder.Services.AddHttpClient();
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents()
                 .AddInteractiveWebAssemblyComponents();
@@ -20,6 +37,8 @@ namespace BeeHive.Cloud.Service
             if (app.Environment.IsDevelopment())
             {
                 app.UseWebAssemblyDebugging();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
             else
             {
@@ -31,9 +50,12 @@ namespace BeeHive.Cloud.Service
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
+            app.UseBlazorFrameworkFiles();
             app.UseAntiforgery();
 
-            app.MapRazorComponents<App>()
+            app.MapControllers();
+
+            app.MapRazorComponents<Application>()
                 .AddInteractiveServerRenderMode()
                 .AddInteractiveWebAssemblyRenderMode()
                 .AddAdditionalAssemblies(typeof(Client._Imports).Assembly);

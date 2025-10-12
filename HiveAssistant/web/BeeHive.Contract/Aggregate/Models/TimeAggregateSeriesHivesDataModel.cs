@@ -2,7 +2,7 @@
 
 public class TimeAggregateSeriesHivesDataModel
 {
-    public required DateTime Timestamp { get; init; }
+    public required DateTimeOffset Timestamp { get; init; }
     public required int[] Count { get; init; }
     public required float?[] MaxValue { get; init; }
     public required float?[] MinValue { get; init; }

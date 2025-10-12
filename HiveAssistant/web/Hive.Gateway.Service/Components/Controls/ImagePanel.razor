@@ -1,0 +1,77 @@
+﻿<div class="image-container">
+    <div class="image-name-tag">@Media.Title</div>
+    @if (!string.IsNullOrEmpty(Media.Url))
+    {
+        <img src="@Media.Url" class="gallery-image" />
+    }
+    <div class="image-overlay">
+        <span class="show-full-icon" @onclick="() => FullPopupVisible = true">&#x26F6;</span>
+        <span class="delete-icon" @onclick="() => DeletePopupVisible = true">&#x1F5D1;</span>
+        <span class="edit-icon" @onclick="ShowEditPopup">&#x270E;</span>
+    </div>
+    @if (EditPopupVisible)
+    {
+        <div class="popup-backdrop" @onclick="ClosePopup">
+            <div class="edit-popup" @onclick:stopPropagation="true">
+                <input @bind="EditedTitle" />
+                <button @onclick="SaveEdit">Save</button>
+                <button @onclick="ClosePopup">Cancel</button>
+            </div>
+        </div>
+    }
+    @if (DeletePopupVisible)
+    {
+        <div class="popup-backdrop" @onclick="ClosePopup">
+            <div class="delete-popup" @onclick:stopPropagation="true">
+                <p>Are you sure you want to delete this image?</p>
+                <button class="confirm-btn" @onclick="OnDeleteClick">Yes, Delete</button>
+                <button class="cancel-btn" @onclick="ClosePopup">Cancel</button>
+            </div>
+        </div>
+    }
+    @if (FullPopupVisible)
+    {
+        <div class="popup-backdrop-full" @onclick="() => FullPopupVisible = false">
+            <div class="full-image-popup" @onclick:stopPropagation="true">
+                <img src="@Media.Url" class="full-image" />
+                <button @onclick="() => FullPopupVisible = false">Close</button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public required HiveMediaDto Media { get; set; }
+    [Parameter] public EventCallback<HiveMediaDto> OnDelete { get; set; }
+    [Parameter] public EventCallback<(HiveMediaDto mediaDto, string newTitle)> OnEditTitle { get; set; }
+
+    private bool DeletePopupVisible { get; set; } = false;
+    private bool EditPopupVisible { get; set; } = false;
+    private bool FullPopupVisible { get; set; } = false;
+    private string EditedTitle { get; set; } = string.Empty;
+
+    private void OnDeleteClick()
+    {
+        DeletePopupVisible = false;
+        OnDelete.InvokeAsync(Media);
+    }
+
+    private void ShowEditPopup()
+    {
+        EditedTitle = Media.Title;
+        EditPopupVisible = true;
+    }
+
+    private void SaveEdit()
+    {
+        OnEditTitle.InvokeAsync((Media, EditedTitle));
+        EditPopupVisible = false;
+    }
+
+    private void ClosePopup()
+    {
+        DeletePopupVisible = false;
+        EditPopupVisible = false;
+        EditedTitle = string.Empty;
+    }
+}

@@ -6,9 +6,10 @@ using BeeHive.App.Hives.Repositories;
 using BeeHive.App.Hives.Repositories.Specifications;
 using BeeHive.Contract.Aggregate.Models;
 using BeeHive.Contract.Data.Models;
-using BeeHive.Contract.Hives;
+using BeeHive.Contract.Hives.Models;
 using BeeHive.Domain.Aggregate;
 using BeeHive.Domain.Data;
+using Core.App.Extensions;
 using Hive.Gateway.Service.Models;
 using Microsoft.Extensions.Options;
 
@@ -18,41 +19,47 @@ public interface IHiveService
 {
     Task<IList<HiveDto>> ListHives(CancellationToken cancellationToken = default);
 
+    Task<HiveDto> GetHive(int id, CancellationToken cancellationToken = default);
+
+    Task<TimeSeriesDataModel?> GetHiveLastData(int hiveId,
+            TimeSeriesKind kind,
+            CancellationToken cancellationToken = default);
+
     Task<IList<TimeSeriesDataModel>> GetHiveData(int hiveId,
             TimeSeriesKind kind,
-            DateTime? start,
-            DateTime? end,
+            DateTimeOffset? start,
+            DateTimeOffset? end,
             CancellationToken cancellationToken = default);
 
     Task<IList<TimeSeriesHivesDataModel>> GetHivesData(TimeSeriesKind kind,
             int[] hiveId,
-            DateTime? start,
-            DateTime? end,
+            DateTimeOffset? start,
+            DateTimeOffset? end,
             CancellationToken cancellationToken = default);
 
     Task<IList<TimeAggregateSeriesDataModel>> GetHiveAggregateData(int hiveId,
             TimeSeriesKind kind,
             AggregationPeriod period,
-            DateTime? start,
-            DateTime? end,
+            DateTimeOffset? start,
+            DateTimeOffset? end,
             CancellationToken cancellationToken = default);
 
     Task<IList<TimeAggregateSeriesHivesDataModel>> GetHivesAggregateData(TimeSeriesKind kind,
             AggregationPeriod period,
             int[] hiveId,
-            DateTime? start,
-            DateTime? end,
+            DateTimeOffset? start,
+            DateTimeOffset? end,
             CancellationToken cancellationToken = default);
 }
 
-public class HiveService(IOptions<BeeGardenConfig> beeGardenConfig,
+public sealed class HiveService(IOptions<BeeGardenConfig> beeGardenConfig,
     IHiveRepository hiveRepository,
     ITimeSeriesDataRepository timeSeriesDataRepository,
     ITimeAggregateSeriesDataRepository timeAggregateSeriesDataRepository) : IHiveService
 {
     public async Task<IList<HiveDto>> ListHives(CancellationToken cancellationToken = default)
     {
-        var spec = new HiveSpecification()
+        var spec = new HiveDtoSpecification()
         {
             BeeGarden = (beeGardenConfig.Value.BeeGardenKey, beeGardenConfig.Value.HoldingKey)
         };
@@ -60,16 +67,34 @@ public class HiveService(IOptions<BeeGardenConfig> beeGardenConfig,
         return await hiveRepository.GetAsync<HiveDto>(spec, cancellationToken);
     }
 
-    public async Task<IList<TimeSeriesDataModel>> GetHiveData(int hiveId,
+    public async Task<HiveDto> GetHive(int id, CancellationToken cancellationToken = default)
+    {
+        return await hiveRepository.GetByIdAsync<HiveDto>(id, HiveMappingExtensions.Map, cancellationToken);
+    }
+
+    public async Task<TimeSeriesDataModel?> GetHiveLastData(int hiveId,
             TimeSeriesKind kind,
-            DateTime? start,
-            DateTime? end,
             CancellationToken cancellationToken = default)
     {
         var spec = new TimeSeriesDataSpecification()
         {
-            From = start,
-            To = end,
+            HiveId = hiveId,
+            Kind = kind,
+            Asc = false
+        };
+        return await timeSeriesDataRepository.GetFirstOrDefaultAsync(spec, cancellationToken);
+    }
+
+    public async Task<IList<TimeSeriesDataModel>> GetHiveData(int hiveId,
+            TimeSeriesKind kind,
+            DateTimeOffset? start,
+            DateTimeOffset? end,
+            CancellationToken cancellationToken = default)
+    {
+        var spec = new TimeSeriesDataSpecification()
+        {
+            From = start?.UtcDateTime,
+            To = end?.UtcDateTime,
             HiveId = hiveId,
             Kind = kind
         };
@@ -78,14 +103,14 @@ public class HiveService(IOptions<BeeGardenConfig> beeGardenConfig,
 
     public async Task<IList<TimeSeriesHivesDataModel>> GetHivesData(TimeSeriesKind kind,
             int[] hiveId,
-            DateTime? start,
-            DateTime? end,
+            DateTimeOffset? start,
+            DateTimeOffset? end,
             CancellationToken cancellationToken = default)
     {
         var spec = new TimeSeriesHivesDataSpecification()
         {
-            From = start,
-            To = end,
+            From = start?.UtcDateTime,
+            To = end?.UtcDateTime,
             HiveIds = hiveId,
             Kind = kind
         };
@@ -99,7 +124,7 @@ public class HiveService(IOptions<BeeGardenConfig> beeGardenConfig,
             mapIdArray[i] = Array.IndexOf(hiveId, sortId[i]);
         }
 
-        DateTime? startDateTime = null;
+        DateTimeOffset? startDateTime = null;
         int valIdx = 0;
         foreach (var item in linerData)
         {
@@ -123,24 +148,33 @@ public class HiveService(IOptions<BeeGardenConfig> beeGardenConfig,
         return list;
     }
 
-    public async Task<IList<TimeAggregateSeriesDataModel>> GetHiveAggregateData(int hiveId, TimeSeriesKind kind, AggregationPeriod period, DateTime? start, DateTime? end, CancellationToken cancellationToken = default)
+    public async Task<IList<TimeAggregateSeriesDataModel>> GetHiveAggregateData(int hiveId,
+        TimeSeriesKind kind,
+        AggregationPeriod period,
+        DateTimeOffset? start,
+        DateTimeOffset? end,
+        CancellationToken cancellationToken = default)
     {
         var spec = new TimeAggregateSeriesDataSpecification()
         {
-            From = start,
-            To = end,
+            From = start?.UtcDateTime,
+            To = end?.UtcDateTime,
             HiveId = hiveId,
             Kind = kind
         };
         return await timeAggregateSeriesDataRepository.GetAsync(spec, cancellationToken);
     }
 
-    public async Task<IList<TimeAggregateSeriesHivesDataModel>> GetHivesAggregateData(TimeSeriesKind kind, AggregationPeriod period, int[] hiveId, DateTime? start, DateTime? end, CancellationToken cancellationToken = default)
+    public async Task<IList<TimeAggregateSeriesHivesDataModel>> GetHivesAggregateData(TimeSeriesKind kind,
+        AggregationPeriod period, int[] hiveId,
+        DateTimeOffset? start,
+        DateTimeOffset? end,
+        CancellationToken cancellationToken = default)
     {
         var spec = new TimeAggregateSeriesHivesDataSpecification()
         {
-            From = start,
-            To = end,
+            From = start?.UtcDateTime,
+            To = end?.UtcDateTime,
             HiveIds = hiveId,
             Kind = kind,
             Period = period
@@ -155,7 +189,7 @@ public class HiveService(IOptions<BeeGardenConfig> beeGardenConfig,
             mapIdArray[i] = Array.IndexOf(hiveId, sortId[i]);
         }
 
-        DateTime? startDateTime = null;
+        DateTimeOffset? startDateTime = null;
         int valIdx = 0;
         foreach (var item in linerData)
         {

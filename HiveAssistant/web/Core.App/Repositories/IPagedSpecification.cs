@@ -1,6 +1,6 @@
-﻿using Core.App.Repositories.Filter;
+﻿using System.Linq.Expressions;
+using Core.App.Repositories.Filter;
 using Core.App.Repositories.Order;
-using System.Linq.Expressions;
 
 namespace Core.App.Repositories;
 
@@ -24,7 +24,7 @@ public sealed class PagedSpecificationWrapper<TEntity>(ISpecification<TEntity> b
     public int? Skip { get; set; }
     public int? Take { get; set; }
 
-    public IEnumerable<IFilter<TEntity>>? AsEnumerableFilters()
+    public IEnumerable<IFilter<TEntity>> AsEnumerableFilters()
     {
         return baseSpec.AsEnumerableFilters();
     }
@@ -41,7 +41,7 @@ public sealed class PagedSpecificationWrapper<TEntity, TDto>(IMapSpecification<T
     public int? Skip { get; set; }
     public int? Take { get; set; }
 
-    public IEnumerable<IFilter<TEntity>>? AsEnumerableFilters()
+    public IEnumerable<IFilter<TEntity>> AsEnumerableFilters()
     {
         return baseSpec.AsEnumerableFilters();
     }
@@ -53,8 +53,5 @@ public sealed class PagedSpecificationWrapper<TEntity, TDto>(IMapSpecification<T
 
     public bool Distinct => baseSpec.Distinct;
 
-    public Expression<Func<TEntity, TDto>> Selector()
-    {
-        return baseSpec.Selector();
-    }
+    public Expression<Func<TEntity, TDto>> Selector => baseSpec.Selector;
 }

@@ -2,17 +2,21 @@
 
 namespace Core.Domain.Aggregates;
 
-public interface IAggregateRoot<TId> : IEntity<TId>
+public interface IAggregateRoot
 {
-    IReadOnlyCollection<IDomainEvent<TId>> DomainEvents { get; }
+    IReadOnlyCollection<IDomainEvent> DomainEvents { get; }
 
     void ClearAllDomainEvents();
 }
 
+public interface IAggregateRoot<TId> : IEntity<TId>, IAggregateRoot
+{
+}
+
 public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot<TId>
 {
-    private readonly Queue<IDomainEvent<TId>> _domainEvents = new();
-    public IReadOnlyCollection<IDomainEvent<TId>> DomainEvents => _domainEvents;
+    private readonly Queue<IDomainEvent> _domainEvents = new();
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
 
     protected AggregateRoot()
     {

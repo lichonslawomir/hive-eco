@@ -14,6 +14,7 @@ internal sealed class TimeAggregateSeriesConfiguration : EntityConfiguration<Tim
         builder.Property(e => e.Period)
             .IsRequired();
         builder.Property(e => e.LasteAggregateTime)
+            .UtcDateTime()
             .IsRequired(false);
 
         builder.HasOne(e => e.TimeSeries)

@@ -1,4 +1,5 @@
 ﻿using BeeHive.Domain.Hives.Audio;
+using Core.Infra.DataAccess.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,6 +16,10 @@ internal sealed class AudioFileConfiguration : IEntityTypeConfiguration<AudioFil
             .HasForeignKey(e => e.HiveId)
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired(true);
+
+        builder.Property(e => e.Timestamp)
+            .UtcDateTime()
+            .IsRequired();
 
         builder.Property(e => e.SampleRate)
             .IsRequired();

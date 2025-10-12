@@ -1,4 +1,5 @@
 ﻿using BeeHive.Domain.Aggregate;
+using Core.Infra.DataAccess.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -26,5 +27,8 @@ internal sealed class AudioAggregateStatsDataConfiguration : IEntityTypeConfigur
             .IsRequired();
         builder.Property(e => e.AmplitudeMav)
             .IsRequired();
+
+        builder.Property(e => e.Timestamp)
+            .UtcDateTime();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Core.App.Repositories.Include;
+﻿using System.Linq.Expressions;
+using Core.App.Repositories.Include;
 using Core.Contract.Queries.Pagination;
 using Core.Domain.Aggregates;
 
@@ -27,5 +28,25 @@ public interface IGenericRepository<T, TKey> : IGenericRepository<T>
 {
     ValueTask<T?> GetByIdAsync(TKey id, CancellationToken cancellationToken);
 
+    Task<TDto?> GetByIdAsync<TDto>(TKey id, Expression<Func<T, TDto>> mapExpression, CancellationToken cancellationToken);
+
     Task<T?> GetByIdAsync(TKey id, IncludeTreeExpression<T>[] includes, CancellationToken cancellationToken);
+}
+
+public static class GenericRepositoryExtensions
+{
+    public static Task<PageResult<TDto>> GetPagedAsync<T, TDto>(this IGenericRepository<T> repo,
+        IMapSpecification<T, TDto> specification,
+        int? take,
+        int? skip,
+        CancellationToken cancellationToken)
+        where T : class
+    {
+        var s = new PagedSpecificationWrapper<T, TDto>(specification)
+        {
+            Take = take,
+            Skip = skip,
+        };
+        return repo.GetPagedAsync(s, cancellationToken);
+    }
 }

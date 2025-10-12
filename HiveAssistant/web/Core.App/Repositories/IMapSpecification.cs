@@ -7,5 +7,5 @@ public interface IMapSpecification<TEntity, TDto>
 {
     bool Distinct { get; }
 
-    Expression<Func<TEntity, TDto>> Selector();
+    Expression<Func<TEntity, TDto>> Selector { get; }
 }

@@ -12,7 +12,9 @@ public interface IBeeHiveDbContext
 {
     public DbSet<Holding> Holdings { get; }
     public DbSet<BeeGarden> BeeGardens { get; }
+    public DbSet<BeeGardenImportState> BeeGardenImportStates { get; }
     public DbSet<Hive> Hives { get; }
+    public DbSet<HiveMedia> HiveMedia { get; }
     public DbSet<TimeSeries> TimeSeries { get; }
     public DbSet<AudioFile> AudioFiles { get; }
     public DbSet<TimeSeriesData> TimeSeriesData { get; }

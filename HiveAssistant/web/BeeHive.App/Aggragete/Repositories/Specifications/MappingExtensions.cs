@@ -34,23 +34,29 @@ public static class MappingExtensions
         return new TimeAggregateSeriesDataModelEx()
         {
             HiveId = e.TimeAggregateSeries.TimeSeries.HiveId,
+            Kind = e.TimeAggregateSeries.TimeSeries.Kind,
+            Period = e.TimeAggregateSeries.Period,
             Timestamp = e.Timestamp,
             Count = e.Count,
             MaxValue = e.MaxValue,
             MinValue = e.MinValue,
             AvgValue = e.AvgValue,
             MedValue = e.MedValue,
+            CreatedOrUpdatedDate = e.CreatedOrUpdatedDate
         };
     }
 
     public static Expression<Func<TimeAggregateSeriesData, TimeAggregateSeriesDataModelEx>> MapEx = e => new TimeAggregateSeriesDataModelEx()
     {
         HiveId = e.TimeAggregateSeries.TimeSeries.HiveId,
+        Kind = e.TimeAggregateSeries.TimeSeries.Kind,
+        Period = e.TimeAggregateSeries.Period,
         Timestamp = e.Timestamp,
         Count = e.Count,
         MaxValue = e.MaxValue,
         MinValue = e.MinValue,
         AvgValue = e.AvgValue,
         MedValue = e.MedValue,
+        CreatedOrUpdatedDate = e.CreatedOrUpdatedDate
     };
 }

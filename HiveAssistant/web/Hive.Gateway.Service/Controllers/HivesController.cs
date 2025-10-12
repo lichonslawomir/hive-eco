@@ -1,7 +1,9 @@
 using BeeHive.Contract.Data.Models;
-using BeeHive.Contract.Hives;
+using BeeHive.Contract.Hives.Commands;
+using BeeHive.Contract.Hives.Models;
 using BeeHive.Domain.Aggregate;
 using BeeHive.Domain.Data;
+using Core.Contract.Executers;
 using Hive.Gateway.Service.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,16 +14,29 @@ namespace Hive.Gateway.Service.Controllers
     public class HivesController : ControllerBase
     {
         private readonly IHiveService _hiveService;
+        private readonly ICommandExecuter _commandExecuter;
 
-        public HivesController(IHiveService hiveService)
+        public HivesController(IHiveService hiveService, ICommandExecuter commandExecuter)
         {
             _hiveService = hiveService;
+            _commandExecuter = commandExecuter;
         }
 
         [HttpGet]
         public async Task<IList<HiveDto>> Get([FromQuery] DateTime? start, [FromQuery] DateTime? end, CancellationToken cancellationToken)
         {
             return await _hiveService.ListHives(cancellationToken);
+        }
+
+        [HttpPut("{hiveId}")]
+        public async Task<IActionResult> Update(int hiveId, [FromBody] HiveUpdateModel data, CancellationToken cancellationToken)
+        {
+            await _commandExecuter.ExecuteCommand(new UpdateHiveCommand()
+            {
+                Id = hiveId,
+                Data = data
+            }, cancellationToken);
+            return NoContent();
         }
 
         [HttpGet("{hiveId}/data/{kind}")]

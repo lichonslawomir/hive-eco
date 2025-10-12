@@ -1,6 +1,15 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using BeeHive.Contract.Hives.Models
+
+@rendermode InteractiveServer
+
+@inject IHiveService HiveService
+@inject AppState AppState
+
+@implements IDisposable
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">BlazorApp1</a>
+        <a class="navbar-brand" href="">Hive guardian</a>
     </div>
 </div>
 
@@ -16,15 +25,40 @@
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="audio" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Audio
+                <span class="bi bi-bee-buzz-nav-menu" aria-hidden="true"></span> Audio
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="hive-editor">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Hives
+            <NavLink class="nav-link" href="hives-editor">
+                <span class="bi bi-hive-list-nav-menu" aria-hidden="true"></span> Hives
             </NavLink>
+            @foreach (var hive in _hives)
+            {
+                <NavLink class="nav-link" href="@($"/hive/{hive.Id}")">
+                    <span class="bi" aria-hidden="true"></span> @hive.Name
+                </NavLink>
+            }
         </div>
     </nav>
 </div>
 
+@code {
+
+    private IList<HiveDto> _hives = new List<HiveDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hives = await HiveService.ListHives();
+        AppState.OnHiveCollectionChange += HandleChange;
+    }
+    public void Dispose()
+    {
+        AppState.OnHiveCollectionChange -= HandleChange;
+    }
+    private async Task HandleChange(IList<HiveDto> hives)
+    {
+        _hives = hives;
+        await InvokeAsync(StateHasChanged);
+    }
+}

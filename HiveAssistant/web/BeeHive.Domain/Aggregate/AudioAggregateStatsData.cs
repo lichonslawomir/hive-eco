@@ -1,6 +1,6 @@
 ﻿namespace BeeHive.Domain.Aggregate;
 
-public class AudioAggregateStatsData
+public sealed class AudioAggregateStatsData
 {
     internal AudioAggregateStatsData()
     {

@@ -366,3 +366,4 @@ FodyWeavers.xsd
 /HiveAssistant/web/Hive.Gateway.Service/Data/
 
 /Drivers/
+/appsetings.Production.json

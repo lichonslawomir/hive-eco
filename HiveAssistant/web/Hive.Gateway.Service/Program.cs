@@ -5,7 +5,6 @@ using Core.Infra.Schedule.Extensioms.DependencyInjection;
 using Hive.Gateway.Service.Components;
 using Hive.Gateway.Service.Extensions;
 using Hive.Gateway.Service.Models;
-using Hive.Gateway.Service.OsUtils;
 
 namespace Hive.Gateway.Service
 {
@@ -29,8 +28,6 @@ namespace Hive.Gateway.Service
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            //builder.Services.AddHostedService<FirewallService>();
-
             builder.Services.AddAppServices()
                 .AddInfrastructureServices(builder.Configuration)
                 .Configure<BeeGardenConfig>(builder.Configuration.GetSection(nameof(BeeGardenConfig)))
@@ -44,6 +41,17 @@ namespace Hive.Gateway.Service
                 .AddInteractiveWebAssemblyComponents();
 
             var app = builder.Build();
+
+            // Get logger from DI
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            // Log startup info
+            var env = builder.Environment;
+            logger.LogInformation("Hive.Gateway.Service starting, Environment: {EnvironmentName}", env.EnvironmentName);
+            if (builder.Configuration is IConfigurationRoot root)
+            {
+                foreach (var provider in root.Providers)
+                    logger.LogInformation("Loaded configuration source: {Source}", provider.ToString());
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -62,8 +70,7 @@ namespace Hive.Gateway.Service
             app.MapControllers();
 
             app.MapRazorComponents<App>()
-                .AddInteractiveServerRenderMode()
-                .AddInteractiveWebAssemblyRenderMode(); ;
+                .AddInteractiveServerRenderMode();
 
             app.Run();
         }

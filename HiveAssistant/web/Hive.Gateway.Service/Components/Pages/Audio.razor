@@ -1,5 +1,6 @@
 ﻿@page "/audio"
 @using BeeHive.Contract.Aggregate.Models
+@using BeeHive.Contract.Hives.Models
 @using BeeHive.Domain.Aggregate
 
 @rendermode InteractiveServer
@@ -40,8 +41,8 @@
     private Chart _chart2;
 
     BeeHive.Domain.Aggregate.AggregationPeriod period = BeeHive.Domain.Aggregate.AggregationPeriod.Min5;
-    private DateTime startDate = DateTime.Today;
-    private DateTime endDate = DateTime.Today.AddDays(1).AddTicks(-1); // End of today
+    private DateTimeOffset startDate = DateTimeOffset.Now.Date;
+    private DateTimeOffset endDate = DateTimeOffset.Now.Date.AddDays(1).AddTicks(-1); // End of today
     private List<TimeAggregateSeriesDataModel>[] dataPoints1 = Array.Empty<List<TimeAggregateSeriesDataModel>>();
     private List<TimeAggregateSeriesDataModel>[] dataPoints2 = Array.Empty<List<TimeAggregateSeriesDataModel>>();
     LineConfig chartConfig1 = new LineConfig();

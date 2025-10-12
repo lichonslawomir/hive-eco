@@ -1,7 +1,7 @@
 ﻿namespace BeeHive.Contract.Data.Models;
 
-public class TimeSeriesHivesDataModel
+public struct TimeSeriesHivesDataModel
 {
-    public required DateTime Timestamp { get; init; }
+    public required DateTimeOffset Timestamp { get; init; }
     public required float[] Values { get; init; }
 }

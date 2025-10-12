@@ -1,6 +1,6 @@
 ﻿namespace BeeHive.Domain.Data;
 
-public class TimeSeriesData
+public sealed class TimeSeriesData
 {
     internal TimeSeriesData(TimeSeries timeSeries, DateTime timestamp, float value)
     {
@@ -18,5 +18,5 @@ public class TimeSeriesData
 
     public DateTime Timestamp { get; private set; }
 
-    public float Value { get; private set; }
+    public float Value { get; set; }
 }

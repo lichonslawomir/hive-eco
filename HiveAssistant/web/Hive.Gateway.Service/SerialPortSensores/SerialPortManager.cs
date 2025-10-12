@@ -40,7 +40,7 @@ public class SerialPortManager(SerialPort serialPort, ISensorBuffor sensorBuffor
                             cmd = ReadNoneZero();
                             if ((char)cmd == 'C')
                             {
-                                await sensorBuffor.AddAudio(hiveId, b, stopToken);
+                                await sensorBuffor.AddAudio(hiveId, port, b, stopToken);
                                 _faildCount = 0;
                             }
                             else
@@ -62,8 +62,8 @@ public class SerialPortManager(SerialPort serialPort, ISensorBuffor sensorBuffor
                     var cmd5 = ReadNoneZero();
                     if ((char)cmd2 == 'T' && (char)cmd3 == 'G')
                     {
-                        await sensorBuffor.AddData(hiveId, BeeHive.Domain.Data.TimeSeriesKind.Temperature, t1, stopToken);
-                        await sensorBuffor.AddData(hiveId, BeeHive.Domain.Data.TimeSeriesKind.Humidity, h1, stopToken);
+                        await sensorBuffor.AddData(hiveId, port, BeeHive.Domain.Data.TimeSeriesKind.Temperature, t1, stopToken);
+                        await sensorBuffor.AddData(hiveId, port, BeeHive.Domain.Data.TimeSeriesKind.Humidity, h1, stopToken);
                         _faildCount = 0;
                     }
                     else
@@ -75,8 +75,8 @@ public class SerialPortManager(SerialPort serialPort, ISensorBuffor sensorBuffor
                     }
                     if ((char)cmd4 == 'U' && (char)cmd5 == 'E')
                     {
-                        await sensorBuffor.AddData(hiveId, BeeHive.Domain.Data.TimeSeriesKind.OutsideTemp, t1, stopToken);
-                        await sensorBuffor.AddData(hiveId, BeeHive.Domain.Data.TimeSeriesKind.OutsideHum, h1, stopToken);
+                        await sensorBuffor.AddData(hiveId, port, BeeHive.Domain.Data.TimeSeriesKind.OutsideTemp, t1, stopToken);
+                        await sensorBuffor.AddData(hiveId, port, BeeHive.Domain.Data.TimeSeriesKind.OutsideHum, h1, stopToken);
                         _faildCount = 0;
                     }
                     else

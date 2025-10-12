@@ -39,6 +39,22 @@ public static class GenericRepositoryExtensions
         return null;
     }
 
+    public static async Task<TDto?> GetFirstOrDefaultAsync<T, TDto>(this IGenericRepository<T> repo, IMapSpecification<T, TDto> specification, CancellationToken cancellationToken)
+        where T : class
+    {
+        var pagedSpec = new PagedSpecificationWrapper<T, TDto>(specification)
+        {
+            Take = 1
+        };
+        var result = await repo.GetPagedAsync(pagedSpec, cancellationToken);
+        if (result.Items.Any())
+        {
+            return result.Items.First();
+        }
+
+        return default;
+    }
+
     public static async Task<T> GetSingleAsync<T>(this IGenericRepository<T> repo, ISpecification<T> specification, CancellationToken cancellationToken)
         where T : class
     {

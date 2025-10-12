@@ -1,6 +1,8 @@
-﻿namespace BeeHive.Domain.Aggregate;
+﻿using Core.Domain.Aggregates;
 
-public class TimeAggregateSeriesData
+namespace BeeHive.Domain.Aggregate;
+
+public sealed class TimeAggregateSeriesData : ISynchronizableEntity
 {
     internal TimeAggregateSeriesData()
     {
@@ -16,4 +18,6 @@ public class TimeAggregateSeriesData
     public float? MinValue { get; internal set; }
     public float? AvgValue { get; internal set; }
     public float? MedValue { get; internal set; }
+
+    public DateTime CreatedOrUpdatedDate { get; private set; }
 }

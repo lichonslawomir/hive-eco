@@ -101,4 +101,33 @@ public static class AggregationPeriodExtensions
                 throw new ArgumentOutOfRangeException($"{nameof(AggregationPeriod)}: {v}");
         }
     }
+
+    public static DateTimeOffset GetRangeEnd(this DateTimeOffset dt, AggregationPeriod v)
+    {
+        dt = dt.AdjustTo(v);
+        switch (v)
+        {
+            case AggregationPeriod.Min5:
+                return dt.Add(TimeSpan.FromMinutes(5).Add(TimeSpan.FromMilliseconds(-1)));
+
+            case AggregationPeriod.Min15:
+                return dt.Add(TimeSpan.FromMinutes(15).Add(TimeSpan.FromMilliseconds(-1)));
+
+            case AggregationPeriod.Hour:
+                return dt.Add(TimeSpan.FromHours(1).Add(TimeSpan.FromMilliseconds(-1)));
+
+            case AggregationPeriod.Day:
+                return dt.Add(TimeSpan.FromDays(1).Add(TimeSpan.FromMilliseconds(-1)));
+
+            case AggregationPeriod.Week:
+                return dt.Add(TimeSpan.FromDays(7).Add(TimeSpan.FromMilliseconds(-1)));
+
+            case AggregationPeriod.Month:
+                var f7 = new DateTimeOffset(dt.Year, dt.Month + 1, 1, 0, 0, 0, dt.Offset);
+                return f7.Add(TimeSpan.FromMilliseconds(-1));
+
+            default:
+                throw new ArgumentOutOfRangeException($"{nameof(AggregationPeriod)}: {v}");
+        }
+    }
 }

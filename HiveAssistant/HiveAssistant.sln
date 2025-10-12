@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11018.127 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.Gateway.Service", "web\Hive.Gateway.Service\Hive.Gateway.Service.csproj", "{377FC663-AF89-4C3C-9ECF-6CBB829B5CDB}"
 EndProject
@@ -32,6 +32,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeHive.Domain.Tests", "web\BeeHive.Domain.Tests\BeeHive.Domain.Tests.csproj", "{441BCCC3-5187-EB79-D101-44A956BAF286}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cloud", "Cloud", "{3F64D3D1-547A-479B-B549-E86C1C5611BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeHive.Cloud.Service", "web\BeeHive.Cloud.Service\BeeHive.Cloud.Service.csproj", "{4456315C-3122-6B28-585A-B74763150B98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeHive.Cloud.Service.Client", "web\BeeHive.Cloud.Service.Client\BeeHive.Cloud.Service.Client.csproj", "{2496F339-99BF-CD1F-6FD0-4B10AA2186FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComDemo", "ComDemo\ComDemo.csproj", "{EAFE31F6-1DF5-4AC7-B131-540FA38FEEFA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{EDCC1C75-161E-4B65-839D-191C1C068768}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +91,18 @@ Global
 		{441BCCC3-5187-EB79-D101-44A956BAF286}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{441BCCC3-5187-EB79-D101-44A956BAF286}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{441BCCC3-5187-EB79-D101-44A956BAF286}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4456315C-3122-6B28-585A-B74763150B98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4456315C-3122-6B28-585A-B74763150B98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4456315C-3122-6B28-585A-B74763150B98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4456315C-3122-6B28-585A-B74763150B98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2496F339-99BF-CD1F-6FD0-4B10AA2186FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2496F339-99BF-CD1F-6FD0-4B10AA2186FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2496F339-99BF-CD1F-6FD0-4B10AA2186FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2496F339-99BF-CD1F-6FD0-4B10AA2186FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAFE31F6-1DF5-4AC7-B131-540FA38FEEFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAFE31F6-1DF5-4AC7-B131-540FA38FEEFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAFE31F6-1DF5-4AC7-B131-540FA38FEEFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAFE31F6-1DF5-4AC7-B131-540FA38FEEFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,6 +114,9 @@ Global
 		{4831E649-9161-4953-A5CE-D3038CBF7CF3} = {9F54737C-33B8-4402-B5A5-9BDA5A98B68C}
 		{D3F30BBB-5D6F-40D9-BCBB-7D7D726E650A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{441BCCC3-5187-EB79-D101-44A956BAF286} = {21BC69C9-0EBA-4F18-B1B8-9204581015EB}
+		{4456315C-3122-6B28-585A-B74763150B98} = {3F64D3D1-547A-479B-B549-E86C1C5611BD}
+		{2496F339-99BF-CD1F-6FD0-4B10AA2186FF} = {3F64D3D1-547A-479B-B549-E86C1C5611BD}
+		{EAFE31F6-1DF5-4AC7-B131-540FA38FEEFA} = {EDCC1C75-161E-4B65-839D-191C1C068768}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {99ECA732-8C7C-4E3E-A0FC-48A5731CEF21}

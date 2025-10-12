@@ -28,6 +28,7 @@ public class EntityConfiguration<TEntity, TId>
         builder.Property(e => e.CreatedBy);
 
         builder.Property(e => e.CreatedDate)
+            .UtcDateTime()
             .IsRequired();
     }
 
@@ -36,7 +37,8 @@ public class EntityConfiguration<TEntity, TId>
     {
         builder.Property(e => e.UpdatedBy);
 
-        builder.Property(e => e.UpdatedDate);
+        builder.Property(e => e.UpdatedDate)
+            .UtcDateTime();
     }
 
     protected void ConfigureAudited<TAuditableEntity, TUserId>(EntityTypeBuilder<TAuditableEntity> builder)
@@ -44,5 +46,34 @@ public class EntityConfiguration<TEntity, TId>
     {
         ConfigureCreationAudited<TAuditableEntity, TUserId>(builder);
         ConfigureUpdateAudited<TAuditableEntity, TUserId>(builder);
+    }
+}
+
+public static class EntityConfigurationExtension
+{
+    public static void ConfigureSynchronizable<TSynchronizableEntity>(this EntityTypeBuilder<TSynchronizableEntity> builder)
+        where TSynchronizableEntity : class, ISynchronizableEntity
+    {
+        builder.Property(e => e.CreatedOrUpdatedDate)
+            .UtcDateTime()
+            .IsRequired();
+
+        builder.HasIndex(e => e.CreatedOrUpdatedDate);
+    }
+
+    public static PropertyBuilder<DateTime> UtcDateTime(this PropertyBuilder<DateTime> builder)
+    {
+        return builder.HasConversion(
+            v => v.ToString("o"),
+            v => DateTime.Parse(v, null, System.Globalization.DateTimeStyles.RoundtripKind)
+         );
+    }
+
+    public static PropertyBuilder<DateTime?> UtcDateTime(this PropertyBuilder<DateTime?> builder)
+    {
+        return builder.HasConversion(
+            v => v.HasValue ? v.Value.ToString("o") : null,
+            v => string.IsNullOrEmpty(v) ? null : DateTime.Parse(v, null, System.Globalization.DateTimeStyles.RoundtripKind)
+         );
     }
 }

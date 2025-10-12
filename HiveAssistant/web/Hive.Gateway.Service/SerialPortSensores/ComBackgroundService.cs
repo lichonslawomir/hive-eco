@@ -1,18 +1,17 @@
-﻿using Hive.Gateway.Service.Services;
-using Microsoft.Extensions.Options;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.IO.Ports;
-using System.Runtime.InteropServices;
+using Hive.Gateway.Service.Services;
+using Microsoft.Extensions.Options;
 
 namespace Hive.Gateway.Service.SerialPortSensores;
 
 public class ComBackgroundService(IOptions<ComPortsOptions> options, ISensorBuffor sensorBuffor, ILoggerFactory loggerFactory) : BackgroundService
 {
-    [DllImport("kernel32.dll")]
-    private static extern uint SetThreadExecutionState(uint esFlags);
+    //[DllImport("kernel32.dll")]
+    //private static extern uint SetThreadExecutionState(uint esFlags);
 
-    private const uint ES_CONTINUOUS = 0x80000000;
-    private const uint ES_SYSTEM_REQUIRED = 0x00000001;
+    //private const uint ES_CONTINUOUS = 0x80000000;
+    //private const uint ES_SYSTEM_REQUIRED = 0x00000001;
 
     private ConcurrentDictionary<string, Task> _ports = new();
     private readonly ILogger _logger = loggerFactory.CreateLogger<ComBackgroundService>();
@@ -20,7 +19,7 @@ public class ComBackgroundService(IOptions<ComPortsOptions> options, ISensorBuff
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation($"ExecuteAsync: {nameof(ComBackgroundService)}");
-        SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
+        //SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 
         do
         {
@@ -37,7 +36,7 @@ public class ComBackgroundService(IOptions<ComPortsOptions> options, ISensorBuff
 #endif
             await Task.Delay(10000, stoppingToken);
         }
-        while (true);
+        while (!stoppingToken.IsCancellationRequested);
     }
 
     private int GetBaudRate(string port)
@@ -74,7 +73,7 @@ public class ComBackgroundService(IOptions<ComPortsOptions> options, ISensorBuff
             }
             await Task.Delay(30000, stoppingToken);
         }
-        while (failCont < 1000);
+        while (failCont < 1000 && !stoppingToken.IsCancellationRequested);
         _ports.Remove(port, out _);
     }
 
@@ -85,12 +84,12 @@ public class ComBackgroundService(IOptions<ComPortsOptions> options, ISensorBuff
         {
             try
             {
-                await sensorBuffor.AddData("1", BeeHive.Domain.Data.TimeSeriesKind.Temperature, Random.Shared.NextSingle(), stoppingToken);
-                await sensorBuffor.AddData("1", BeeHive.Domain.Data.TimeSeriesKind.Humidity, Random.Shared.NextSingle(), stoppingToken);
-                await sensorBuffor.AddData("2", BeeHive.Domain.Data.TimeSeriesKind.Temperature, Random.Shared.NextSingle(), stoppingToken);
-                await sensorBuffor.AddData("2", BeeHive.Domain.Data.TimeSeriesKind.Humidity, Random.Shared.NextSingle(), stoppingToken);
-                await sensorBuffor.AddData("3", BeeHive.Domain.Data.TimeSeriesKind.Temperature, Random.Shared.NextSingle(), stoppingToken);
-                await sensorBuffor.AddData("3", BeeHive.Domain.Data.TimeSeriesKind.Humidity, Random.Shared.NextSingle(), stoppingToken);
+                await sensorBuffor.AddData("1", port, BeeHive.Domain.Data.TimeSeriesKind.Temperature, Random.Shared.NextSingle(), stoppingToken);
+                await sensorBuffor.AddData("1", port, BeeHive.Domain.Data.TimeSeriesKind.Humidity, Random.Shared.NextSingle(), stoppingToken);
+                await sensorBuffor.AddData("2", port, BeeHive.Domain.Data.TimeSeriesKind.Temperature, Random.Shared.NextSingle(), stoppingToken);
+                await sensorBuffor.AddData("2", port, BeeHive.Domain.Data.TimeSeriesKind.Humidity, Random.Shared.NextSingle(), stoppingToken);
+                await sensorBuffor.AddData("3", port, BeeHive.Domain.Data.TimeSeriesKind.Temperature, Random.Shared.NextSingle(), stoppingToken);
+                await sensorBuffor.AddData("3", port, BeeHive.Domain.Data.TimeSeriesKind.Humidity, Random.Shared.NextSingle(), stoppingToken);
                 await Task.Delay(1000, stoppingToken);
             }
             catch (Exception)

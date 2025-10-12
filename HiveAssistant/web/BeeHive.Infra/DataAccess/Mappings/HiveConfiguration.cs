@@ -11,6 +11,7 @@ internal sealed class HiveConfiguration : EntityConfiguration<Hive, int>, IEntit
     {
         ConfigureEntity(builder);
         ConfigureAudited<Hive, string>(builder);
+        builder.ConfigureSynchronizable();
 
         builder.Property(e => e.UniqueKey)
             .HasMaxLength(50)

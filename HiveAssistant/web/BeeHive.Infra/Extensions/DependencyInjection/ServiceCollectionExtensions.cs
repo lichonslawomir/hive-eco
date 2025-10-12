@@ -7,8 +7,8 @@ using BeeHive.Infra.DataAccess.DbContexts;
 using BeeHive.Infra.DataAccess.Repositories;
 using BeeHive.Infra.Jobs.Aggragete;
 using BeeHive.Infra.Services;
-using Core.App;
 using Core.Infra.DataAccess;
+using Core.Infra.Extensions;
 using Core.Infra.Schedule.Extensioms.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         return services
-            .AddScoped<IWorkContext, WorkContext>()
+            .AddCoreInfraServices<WorkContext, BeeHiveDbContext, string>()
             .AddScoped<IDatabaseInitializer, DatabaseInitializer>()
             .AddScoped<IStorageManager, StorageManager>()
             .AddBeeHiveDbContext(configuration)
@@ -44,6 +44,7 @@ public static class ServiceCollectionExtensions
     {
         services
             .AddScoped<IHiveRepository, HiveRepository>()
+            .AddScoped<IHiveMediaRepository, HiveMediaRepository>()
             .AddScoped<ITimeSeriesDataRepository, TimeSeriesDataRepository>()
             .AddScoped<ITimeAggregateSeriesDataRepository, TimeAggregateSeriesDataRepository>();
         return services;

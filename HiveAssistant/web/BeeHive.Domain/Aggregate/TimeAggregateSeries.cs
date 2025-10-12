@@ -4,7 +4,7 @@ using Core.Domain.Aggregates;
 
 namespace BeeHive.Domain.Aggregate;
 
-public class TimeAggregateSeries : AggregateRoot<int>
+public sealed class TimeAggregateSeries : AggregateRoot<int>
 {
     public AggregationPeriod Period { get; private set; }
     public DateTime? LasteAggregateTime { get; private set; }
@@ -22,7 +22,7 @@ public class TimeAggregateSeries : AggregateRoot<int>
         Period = period;
     }
 
-    protected TimeAggregateSeries(int id)
+    private TimeAggregateSeries(int id)
         : base(id)
     {
     }

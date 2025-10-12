@@ -1,0 +1,134 @@
+﻿@page "/hives-editor"
+@using BeeHive.Contract.Hives.Commands
+@using BeeHive.Contract.Hives.Models
+
+@rendermode InteractiveServer
+
+@inject IHiveService HiveService
+@inject ICommandExecuter CommandExecuter
+@inject AppState AppState
+
+@implements IDisposable
+
+<h3>Ule na pasiece</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Id</th>
+            <th>Nazwa</th>
+            <th>ComPort</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var hive in _hives)
+        {
+            <tr>
+                <td>@hive.Id</td>
+                <td>@hive.UniqueKey</td>
+                <td>@hive.Name</td>
+                <td>@hive.ComPort @(string.IsNullOrEmpty(hive.LastComPortUsed) ? "" : $"(!{hive.LastComPortUsed}!)")</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" @onclick="() => OpenEditModal(hive)">
+                        Edit
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal Dialog -->
+@if (_editHive != null)
+{
+    <div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5)">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Product</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@_editHive" OnValidSubmit="SaveHive">
+                        <DataAnnotationsValidator />
+
+                        <div class="mb-3">
+                            <label class="form-label">Id</label>
+                            <InputText class="form-control" @bind-Value="_editHive.UniqueKey" readonly />
+                            <ValidationMessage For="@(() => _editHive.UniqueKey)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nazwa</label>
+                            <InputText class="form-control" @bind-Value="_editHive.Name" />
+                            <ValidationMessage For="@(() => _editHive.Name)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">ComPort</label>
+                            <InputText class="form-control" @bind-Value="_editHive.ComPort" />
+                            <ValidationMessage For="@(() => _editHive.ComPort)" />
+                        </div>
+                        <button type="submit" class="btn btn-success">Save</button>
+                        <button type="button" class="btn btn-secondary ms-2" @onclick="CloseModal">Cancel</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private IList<HiveDto> _hives = new List<HiveDto>();
+
+    HiveUpdateModel? _editHive;
+    int? _editHiveId;
+    private CancellationTokenSource cts = new();
+
+    void OpenEditModal(HiveDto h)
+    {
+        _editHive = new HiveUpdateModel
+        {
+            UniqueKey = h.UniqueKey,
+            Name = h.Name,
+            ComPort = h.ComPort,
+            AudioSensorSampleRate = h.AudioSensorSampleRate,
+            AudioSensorChannels = h.AudioSensorChannels,
+            AudioSensorBitsPerSample = h.AudioSensorBitsPerSample
+        };
+        _editHiveId = h.Id;
+    }
+
+    void CloseModal()
+    {
+        _editHive = null;
+        _editHiveId = null;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hives = await HiveService.ListHives();
+    }
+
+    async Task SaveHive()
+    {
+        if (!_editHiveId.HasValue || _editHive is null)
+            return;
+
+        await CommandExecuter.ExecuteCommand(new UpdateHiveCommand()
+        {
+            Id = _editHiveId.Value,
+            Data = _editHive
+        }, cts.Token);
+        _hives = await HiveService.ListHives();
+        CloseModal();
+        await AppState.NotifyHiveCollectionChange(_hives);
+    }
+
+    public void Dispose()
+    {
+        if (!cts.IsCancellationRequested)
+        {
+            cts.Cancel();
+        }
+    }
+}
