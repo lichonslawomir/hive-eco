@@ -1,0 +1,157 @@
+﻿@page "/audio"
+@using BeeHive.Contract.Aggregate.Models
+@using BeeHive.Domain.Aggregate
+
+@rendermode InteractiveServer
+
+@inject HttpClient Http
+@inject IHiveService HiveService
+
+<PageTitle>Home</PageTitle>
+
+<div class="param-panel">
+    <label>Period: 
+        <select id="periodSelect" @onchange="OnPeriodChanged">
+            @foreach (var periodDesc in Periods)
+            {
+                <option value="@periodDesc.Value" selected="@(periodDesc.Value == period)">@periodDesc.Label</option>
+            }
+        </select>
+    </label>
+    <label>Start: <input type="datetime-local" @bind="startDate" /></label>
+    <label>End: <input type="datetime-local" @bind="endDate" /></label>
+    <button @onclick="LoadGraphs">Load Data</button>
+</div>
+
+<div class="graphs-container" style="display: flex; gap: 2rem; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 400px;">
+        <h4>Frequence</h4>
+        <Chart Config="chartConfig1" @ref="_chart1"></Chart>
+    </div>
+    <div style="flex: 1; min-width: 400px;">
+        <h4>Amplitude</h4>
+        <Chart Config="chartConfig2" @ref="_chart2"></Chart>
+    </div>
+</div>
+
+@code {
+    private IList<HiveDto> _hives = new List<HiveDto>();
+    private Chart _chart1;
+    private Chart _chart2;
+
+    BeeHive.Domain.Aggregate.AggregationPeriod period = BeeHive.Domain.Aggregate.AggregationPeriod.Min5;
+    private DateTime startDate = DateTime.Today;
+    private DateTime endDate = DateTime.Today.AddDays(1).AddTicks(-1); // End of today
+    private List<TimeAggregateSeriesDataModel>[] dataPoints1 = Array.Empty<List<TimeAggregateSeriesDataModel>>();
+    private List<TimeAggregateSeriesDataModel>[] dataPoints2 = Array.Empty<List<TimeAggregateSeriesDataModel>>();
+    LineConfig chartConfig1 = new LineConfig();
+    LineConfig chartConfig2 = new LineConfig();
+
+    private List<(AggregationPeriod Value, string Label)> Periods = new()
+    {
+        (AggregationPeriod.Min5, "5 min"),
+        (AggregationPeriod.Min15, "15 min"),
+        (AggregationPeriod.Hour, "Hour"),
+        (AggregationPeriod.Day, "Day"),
+        (AggregationPeriod.Week, "Week"),
+        (AggregationPeriod.Month, "Month"),
+    };
+
+    private Task OnPeriodChanged(ChangeEventArgs e)
+    {
+        Enum.TryParse<BeeHive.Domain.Aggregate.AggregationPeriod>(e.Value?.ToString() ?? "Min5", true, out period);
+        return Task.CompletedTask;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hives = await HiveService.ListHives();
+        dataPoints1 = _hives.Select(x => new List<TimeAggregateSeriesDataModel>()).ToArray();
+        dataPoints2 = _hives.Select(x => new List<TimeAggregateSeriesDataModel>()).ToArray();
+        await LoadGraphs();
+    }
+
+    private async Task LoadGraphs()
+    {
+        bool isWasm = OperatingSystem.IsBrowser();
+        IList<TimeAggregateSeriesHivesDataModel> tt;
+        IList<TimeAggregateSeriesHivesDataModel> hh;
+        if (isWasm)
+        {
+            string startParam = startDate.ToString("O");
+            string endParam = endDate.ToString("O");
+            var hiveIdParam = string.Join("&", _hives.Select(x => $"hiveId={x.Id}"));
+
+            tt = await Http.GetFromJsonAsync<IList<TimeAggregateSeriesHivesDataModel>>(
+                $"api/hives/agregate-data/{BeeHive.Domain.Data.TimeSeriesKind.BuzzFrequency}/{period}?{hiveIdParam}&start={startParam}&end={endParam}"
+            ) ?? new List<TimeAggregateSeriesHivesDataModel>();
+            hh = await Http.GetFromJsonAsync<IList<TimeAggregateSeriesHivesDataModel>>(
+                $"api/hives/agregate-data/{BeeHive.Domain.Data.TimeSeriesKind.BuzzAmplitudeRms}/{period}?{hiveIdParam}&start={startParam}&end={endParam}"
+            ) ?? new List<TimeAggregateSeriesHivesDataModel>();
+        }
+        else
+        {
+            var hiveIds = _hives.Select(x => x.Id).ToArray();
+            tt = await HiveService.GetHivesAggregateData(BeeHive.Domain.Data.TimeSeriesKind.BuzzFrequency, period, hiveIds, startDate, endDate);
+            hh = await HiveService.GetHivesAggregateData(BeeHive.Domain.Data.TimeSeriesKind.BuzzAmplitudeRms, period, hiveIds, startDate, endDate);
+        }
+
+        chartConfig1.Data.Labels.Clear();
+        chartConfig1.Data.Datasets.Clear();
+        if (tt?.Any() == true)
+        {
+            var labels = tt.Select(dp => dp.Timestamp.ToString("yyyy-MM-dd HH:mm")).ToArray();
+            ((List<string>)chartConfig1.Data.Labels).AddRange(labels);
+            for (int i = 0; i < _hives.Count; ++i)
+            {
+                chartConfig1.Data.Datasets.Add(new ChartJs.Blazor.LineChart.LineDataset<float>(tt.Select(dp => dp.MaxValue[i] ?? float.NaN).ToList())
+                    {
+                        Label = $"Max. {_hives[i].Name}",
+                        Fill = ChartJs.Blazor.Common.Enums.FillingMode.Absolute(i * 3 + 1),
+                        BorderColor = "blue"
+                    });
+                chartConfig1.Data.Datasets.Add(new ChartJs.Blazor.LineChart.LineDataset<float>(tt.Select(dp => dp.MinValue[i] ?? float.NaN).ToList())
+                    {
+                        Label = $"Min. {_hives[i].Name}",
+                        Fill = ChartJs.Blazor.Common.Enums.FillingMode.Absolute(i * 3),
+                        BorderColor = "blue"
+                    });
+                chartConfig1.Data.Datasets.Add(new ChartJs.Blazor.LineChart.LineDataset<float>(tt.Select(dp => dp.AvgValue[i] ?? float.NaN).ToList())
+                    {
+                        Label = $"Avg. {_hives[i].Name}",
+                        Fill = false,
+                        BorderColor = "blue"
+                    });
+            }
+        }
+
+        chartConfig2.Data.Labels.Clear();
+        chartConfig2.Data.Datasets.Clear();
+        if (hh?.Any() == true)
+        {
+            var labels = hh.Select(dp => dp.Timestamp.ToString("yyyy-MM-dd HH:mm")).ToArray();
+            ((List<string>)chartConfig2.Data.Labels).AddRange(labels);
+            for (int i = 0; i < _hives.Count; ++i)
+            {
+                chartConfig2.Data.Datasets.Add(new ChartJs.Blazor.LineChart.LineDataset<float>(hh.Select(dp => dp.MaxValue[i] ?? float.NaN).ToList())
+                    {
+                        Label = $"Max. {_hives[i].Name}",
+                        Fill = ChartJs.Blazor.Common.Enums.FillingMode.Absolute(i * 3 + 1),
+                        BorderColor = "green"
+                    });
+                chartConfig2.Data.Datasets.Add(new ChartJs.Blazor.LineChart.LineDataset<float>(hh.Select(dp => dp.MinValue[i] ?? float.NaN).ToList())
+                    {
+                        Label = $"Min. {_hives[i].Name}",
+                        Fill = ChartJs.Blazor.Common.Enums.FillingMode.Absolute(i * 3),
+                        BorderColor = "green"
+                    });
+                chartConfig2.Data.Datasets.Add(new ChartJs.Blazor.LineChart.LineDataset<float>(hh.Select(dp => dp.AvgValue[i] ?? float.NaN).ToList())
+                    {
+                        Label = $"Avg. {_hives[i].Name}",
+                        Fill = false,
+                        BorderColor = "green"
+                    });
+            }
+        }
+    }
+}
