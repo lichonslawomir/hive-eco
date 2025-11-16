@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11018.127 d18.0
+VisualStudioVersion = 18.0.11018.127
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.Gateway.Service", "web\Hive.Gateway.Service\Hive.Gateway.Service.csproj", "{377FC663-AF89-4C3C-9ECF-6CBB829B5CDB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeHive.Domain", "web\BeeHive.Domain\BeeHive.Domain.csproj", "{C68BE888-076D-442A-BF1C-0F7998CC2296}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
@@ -33,13 +31,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeHive.Domain.Tests", "web
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cloud", "Cloud", "{3F64D3D1-547A-479B-B549-E86C1C5611BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeHive.Cloud.Service", "web\BeeHive.Cloud.Service\BeeHive.Cloud.Service.csproj", "{4456315C-3122-6B28-585A-B74763150B98}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeHive.Cloud.Service.Client", "web\BeeHive.Cloud.Service.Client\BeeHive.Cloud.Service.Client.csproj", "{2496F339-99BF-CD1F-6FD0-4B10AA2186FF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComDemo", "ComDemo\ComDemo.csproj", "{EAFE31F6-1DF5-4AC7-B131-540FA38FEEFA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{EDCC1C75-161E-4B65-839D-191C1C068768}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeHive.Cloud.Service", "web\BeeHive.Cloud.Service\BeeHive.Cloud.Service\BeeHive.Cloud.Service.csproj", "{667FE603-7BC7-408C-B983-5018F8EA7882}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeHive.Cloud.Service.Client", "web\BeeHive.Cloud.Service\BeeHive.Cloud.Service.Client\BeeHive.Cloud.Service.Client.csproj", "{04AD9E00-BD8E-43B7-B9B5-0D6F7A366CF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.Gateway.Service", "web\Hive.Gateway.Service\Hive.Gateway.Service.csproj", "{7BBB63BA-E0DB-4A97-9097-A309848D01A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeHive.Client.Shared", "web\BeeHive.Cloud.Service\BeeHive.Client.Shared\BeeHive.Client.Shared.csproj", "{904BBDC7-6223-48B0-86CB-57CEF3DE4D24}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +49,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{377FC663-AF89-4C3C-9ECF-6CBB829B5CDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{377FC663-AF89-4C3C-9ECF-6CBB829B5CDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{377FC663-AF89-4C3C-9ECF-6CBB829B5CDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{377FC663-AF89-4C3C-9ECF-6CBB829B5CDB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C68BE888-076D-442A-BF1C-0F7998CC2296}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C68BE888-076D-442A-BF1C-0F7998CC2296}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C68BE888-076D-442A-BF1C-0F7998CC2296}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -91,18 +89,26 @@ Global
 		{441BCCC3-5187-EB79-D101-44A956BAF286}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{441BCCC3-5187-EB79-D101-44A956BAF286}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{441BCCC3-5187-EB79-D101-44A956BAF286}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4456315C-3122-6B28-585A-B74763150B98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4456315C-3122-6B28-585A-B74763150B98}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4456315C-3122-6B28-585A-B74763150B98}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4456315C-3122-6B28-585A-B74763150B98}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2496F339-99BF-CD1F-6FD0-4B10AA2186FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2496F339-99BF-CD1F-6FD0-4B10AA2186FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2496F339-99BF-CD1F-6FD0-4B10AA2186FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2496F339-99BF-CD1F-6FD0-4B10AA2186FF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EAFE31F6-1DF5-4AC7-B131-540FA38FEEFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EAFE31F6-1DF5-4AC7-B131-540FA38FEEFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAFE31F6-1DF5-4AC7-B131-540FA38FEEFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAFE31F6-1DF5-4AC7-B131-540FA38FEEFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{667FE603-7BC7-408C-B983-5018F8EA7882}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{667FE603-7BC7-408C-B983-5018F8EA7882}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{667FE603-7BC7-408C-B983-5018F8EA7882}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{667FE603-7BC7-408C-B983-5018F8EA7882}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04AD9E00-BD8E-43B7-B9B5-0D6F7A366CF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04AD9E00-BD8E-43B7-B9B5-0D6F7A366CF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04AD9E00-BD8E-43B7-B9B5-0D6F7A366CF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04AD9E00-BD8E-43B7-B9B5-0D6F7A366CF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BBB63BA-E0DB-4A97-9097-A309848D01A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BBB63BA-E0DB-4A97-9097-A309848D01A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BBB63BA-E0DB-4A97-9097-A309848D01A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BBB63BA-E0DB-4A97-9097-A309848D01A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{904BBDC7-6223-48B0-86CB-57CEF3DE4D24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{904BBDC7-6223-48B0-86CB-57CEF3DE4D24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{904BBDC7-6223-48B0-86CB-57CEF3DE4D24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{904BBDC7-6223-48B0-86CB-57CEF3DE4D24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -114,9 +120,10 @@ Global
 		{4831E649-9161-4953-A5CE-D3038CBF7CF3} = {9F54737C-33B8-4402-B5A5-9BDA5A98B68C}
 		{D3F30BBB-5D6F-40D9-BCBB-7D7D726E650A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{441BCCC3-5187-EB79-D101-44A956BAF286} = {21BC69C9-0EBA-4F18-B1B8-9204581015EB}
-		{4456315C-3122-6B28-585A-B74763150B98} = {3F64D3D1-547A-479B-B549-E86C1C5611BD}
-		{2496F339-99BF-CD1F-6FD0-4B10AA2186FF} = {3F64D3D1-547A-479B-B549-E86C1C5611BD}
 		{EAFE31F6-1DF5-4AC7-B131-540FA38FEEFA} = {EDCC1C75-161E-4B65-839D-191C1C068768}
+		{667FE603-7BC7-408C-B983-5018F8EA7882} = {3F64D3D1-547A-479B-B549-E86C1C5611BD}
+		{04AD9E00-BD8E-43B7-B9B5-0D6F7A366CF6} = {3F64D3D1-547A-479B-B549-E86C1C5611BD}
+		{904BBDC7-6223-48B0-86CB-57CEF3DE4D24} = {3F64D3D1-547A-479B-B549-E86C1C5611BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {99ECA732-8C7C-4E3E-A0FC-48A5731CEF21}

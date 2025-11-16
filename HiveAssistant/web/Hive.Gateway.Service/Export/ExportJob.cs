@@ -89,7 +89,7 @@ public class ExportJob(
                         var ex = await hiveRepository.GetByIdAsync(x.Key.HiveId, MapExportExtensions.MapExport, stoppingToken);
                         return new TimeAggregateSeriesExportModel()
                         {
-                            HoldingUniqueKey = ex.BeeGarden.UniqueKey,
+                            HoldingUniqueKey = ex.Holding.UniqueKey,
                             BeeGardenUniqueKey = ex.BeeGarden.UniqueKey,
                             HiveUniqueKey = ex.Hive.UniqueKey,
                             Kind = x.Key.Kind,
@@ -97,7 +97,7 @@ public class ExportJob(
                             Datas = x.Select(async y =>
                             {
                                 var range = y.Timestamp.GetRangeEnd(x.Key.Period);
-                                var lv = await timeSeriesDataRepository.GetSingleAsync(new TimeSeriesDataSpecification()
+                                var lastData = await timeSeriesDataRepository.GetFirstOrDefaultAsync(new TimeSeriesDataSpecification()
                                 {
                                     HiveId = x.Key.HiveId,
                                     Kind = x.Key.Kind,
@@ -112,8 +112,8 @@ public class ExportJob(
                                     MinValue = y.MinValue,
                                     AvgValue = y.AvgValue,
                                     MedValue = y.MedValue,
-                                    LastValue = lv.Value,
-                                    LastValueTimestamp = lv.Timestamp,
+                                    LastValue = lastData.exists ? lastData.dto.Value : null,
+                                    LastValueTimestamp = lastData.exists ? lastData.dto.Timestamp : null,
                                     CreatedOrUpdatedDate = y.CreatedOrUpdatedDate
                                 };
                             }).Select(x => x.Result).ToList()

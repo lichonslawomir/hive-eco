@@ -3,5 +3,5 @@
 public struct TimeSeriesHivesDataModel
 {
     public required DateTimeOffset Timestamp { get; init; }
-    public required float[] Values { get; init; }
+    public float[] Values { get; init; }
 }

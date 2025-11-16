@@ -31,7 +31,7 @@ public class ExportService(HttpClient client, IOptions<BeeGardenConfig> beeGarde
 
         if (_cache.TryGetValue(exportEntity, out DateTimeOffset lastExportData))
             return lastExportData;
-        var returnValue = await client.GetFromJsonAsync<ExportState>($"api/export/state/{exportEntity}?holding={beeGardenConfig.Value.HoldingKey}&beeGarden={beeGardenConfig.Value.BeeGardenKey}");
+        var returnValue = await client.GetFromJsonAsync<ExportState>($"api/export/state/{exportEntity}?holding={beeGardenConfig.Value.HoldingKey}&beeGarden={beeGardenConfig.Value.BeeGardenKey}", stoppingToken);
         if (returnValue.State.HasValue)
             _cache[exportEntity] = returnValue.State.Value;
         return returnValue.State;
@@ -39,21 +39,21 @@ public class ExportService(HttpClient client, IOptions<BeeGardenConfig> beeGarde
 
     public async Task Export(IReadOnlyCollection<HiveExportModel> hiveExportModels, DateTimeOffset lastExportData, CancellationToken stoppingToken)
     {
-        var response = await client.PostAsJsonAsync("api/export/hives", hiveExportModels);
+        var response = await client.PostAsJsonAsync("api/export/hives", hiveExportModels, stoppingToken);
         response.EnsureSuccessStatusCode();
         _cache[ExportEntity.Hive] = lastExportData;
     }
 
     public async Task Export(IReadOnlyCollection<HiveMediaExportModel> hiveExportModels, DateTimeOffset lastExportData, CancellationToken stoppingToken)
     {
-        var response = await client.PostAsJsonAsync("api/export/hive-medias", hiveExportModels);
+        var response = await client.PostAsJsonAsync("api/export/hive-medias", hiveExportModels, stoppingToken);
         response.EnsureSuccessStatusCode();
         _cache[ExportEntity.HiveMedia] = lastExportData;
     }
 
     public async Task Export(IReadOnlyCollection<TimeAggregateSeriesExportModel> exportModels, DateTimeOffset lastExportData, CancellationToken stoppingToken)
     {
-        var response = await client.PostAsJsonAsync("api/export/hive-data", exportModels);
+        var response = await client.PostAsJsonAsync("api/export/hive-data", exportModels, stoppingToken);
         response.EnsureSuccessStatusCode();
         _cache[ExportEntity.TimeTimeAggregateSeriesData] = lastExportData;
     }

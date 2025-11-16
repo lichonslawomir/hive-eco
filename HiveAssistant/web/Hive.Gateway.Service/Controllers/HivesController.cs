@@ -1,10 +1,10 @@
 using BeeHive.Contract.Data.Models;
 using BeeHive.Contract.Hives.Commands;
 using BeeHive.Contract.Hives.Models;
+using BeeHive.Contract.Interfaces;
 using BeeHive.Domain.Aggregate;
 using BeeHive.Domain.Data;
 using Core.Contract.Executers;
-using Hive.Gateway.Service.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hive.Gateway.Service.Controllers
@@ -42,8 +42,8 @@ namespace Hive.Gateway.Service.Controllers
         [HttpGet("{hiveId}/data/{kind}")]
         public async Task<IList<TimeSeriesDataModel>> GetHiveData(int hiveId,
             TimeSeriesKind kind,
-            [FromQuery] DateTime? start,
-            [FromQuery] DateTime? end,
+            [FromQuery] DateTimeOffset? start,
+            [FromQuery] DateTimeOffset? end,
             CancellationToken cancellationToken)
         {
             return await _hiveService.GetHiveData(hiveId, kind, start, end, cancellationToken);
@@ -52,8 +52,8 @@ namespace Hive.Gateway.Service.Controllers
         [HttpGet("data/{kind}")]
         public async Task<IList<TimeSeriesHivesDataModel>> GetHivesData(TimeSeriesKind kind,
             [FromQuery] int[] hiveId,
-            [FromQuery] DateTime? start,
-            [FromQuery] DateTime? end,
+            [FromQuery] DateTimeOffset? start,
+            [FromQuery] DateTimeOffset? end,
             CancellationToken cancellationToken)
         {
             return await _hiveService.GetHivesData(kind, hiveId, start, end, cancellationToken);
@@ -63,8 +63,8 @@ namespace Hive.Gateway.Service.Controllers
         public async Task<IList<TimeSeriesDataModel>> GetHiveAggregateData(int hiveId,
             TimeSeriesKind kind,
             AggregationPeriod period,
-            [FromQuery] DateTime? start,
-            [FromQuery] DateTime? end,
+            [FromQuery] DateTimeOffset? start,
+            [FromQuery] DateTimeOffset? end,
             CancellationToken cancellationToken)
         {
             return await _hiveService.GetHiveData(hiveId, kind, start, end, cancellationToken);
@@ -74,8 +74,8 @@ namespace Hive.Gateway.Service.Controllers
         public async Task<IList<TimeSeriesHivesDataModel>> GetHivesAggregateData(TimeSeriesKind kind,
             AggregationPeriod period,
             [FromQuery] int[] hiveId,
-            [FromQuery] DateTime? start,
-            [FromQuery] DateTime? end,
+            [FromQuery] DateTimeOffset? start,
+            [FromQuery] DateTimeOffset? end,
             CancellationToken cancellationToken)
         {
             return await _hiveService.GetHivesData(kind, hiveId, start, end, cancellationToken);

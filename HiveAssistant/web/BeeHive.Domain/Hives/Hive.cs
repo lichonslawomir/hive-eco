@@ -111,7 +111,7 @@ public sealed class Hive : AuditableAggregateRoot<int, string>, ISynchronizableE
         AudioSensorBitsPerSample = audioSensorBitsPerSample;
     }
 
-    public void Update(string name, string comPort, int audioSensorSampleRate, int audioSensorChannels, int audioSensorBitsPerSample)
+    public void Update(string name, string? comPort, int audioSensorSampleRate, int audioSensorChannels, int audioSensorBitsPerSample)
     {
         Name = name;
         ComPort = comPort;

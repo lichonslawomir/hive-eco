@@ -1,6 +1,7 @@
 @Hive.Gateway.Service_HostAddress = http://localhost:5031
 
-GET {{Hive.Gateway.Service_HostAddress}}/weatherforecast/
+GET {{Hive.Gateway.Service_HostAddress}}/api/hives
 Accept: application/json
 
 ###
+

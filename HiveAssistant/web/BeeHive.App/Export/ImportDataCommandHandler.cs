@@ -74,14 +74,14 @@ public class ImportDataCommandHandler : BaseDataExportService, ICommandHandler<I
                 var (aggregateSeries, newAggregateSeries) = await GetAggregate(model.Period, timeSeries, newTimeSeries, cancellationToken);
                 foreach (var stats in model.Datas)
                 {
-                    var timeAggregateSeriesData = await GetAggregateData(stats.Timestamp, aggregateSeries, newHive, cancellationToken);
+                    var timeAggregateSeriesData = await GetAggregateData(stats.Timestamp.UtcDateTime, aggregateSeries, newHive, cancellationToken);
                     if (stats.LastValueTimestamp.HasValue && stats.LastValue.HasValue)
                     {
-                        var seriesData = await GetSeriesData(stats.LastValueTimestamp.Value, timeSeries, newHive, cancellationToken);
+                        var seriesData = await GetSeriesData(stats.LastValueTimestamp.Value.UtcDateTime, timeSeries, newHive, cancellationToken);
                         if (seriesData is null)
                             _beeHiveDbContext.TimeSeriesData.Add(timeSeries.AddData(stats.LastValueTimestamp.Value.UtcDateTime, stats.LastValue.Value));
                         else
-                            seriesData.Value = stats.LastValue.Value;
+                            timeSeries.UpdateData(seriesData, stats.LastValue.Value);
                     }
 
                     if (timeAggregateSeriesData is null)

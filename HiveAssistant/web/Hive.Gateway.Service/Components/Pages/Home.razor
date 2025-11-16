@@ -9,7 +9,7 @@
 
 @inject IHiveService HiveService
 @inject IScopeService ScopeService
-@inject AppState AppState
+@inject IAppState AppState
 @inject IJSRuntime JS
 
 @implements IDisposable
@@ -92,6 +92,7 @@
         AppState.OnTimeSeriesAdded += HandleTimeSeriesAdded;
         await LoadGraphs(HiveService);
         await LoadLastData(HiveService);
+        await AppState.StartListeningAsync();
     }
     public void Dispose()
     {

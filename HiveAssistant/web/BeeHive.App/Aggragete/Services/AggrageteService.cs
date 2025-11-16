@@ -91,6 +91,7 @@ internal class AggrageteService(IBeeHiveDbContext dbContext) : IAggrageteService
                         stats?.Avg,
                         med);
                 }
+                await dbContext.SaveChangesAsync(stoppingToken);
             }
         }
 

@@ -6,7 +6,7 @@
 
 @inject IHiveService HiveService
 @inject ICommandExecuter CommandExecuter
-@inject AppState AppState
+@inject IAppState AppState
 
 @implements IDisposable
 
@@ -121,7 +121,7 @@
         }, cts.Token);
         _hives = await HiveService.ListHives();
         CloseModal();
-        await AppState.NotifyHiveCollectionChange(_hives);
+        await ((AppState)AppState).NotifyHiveCollectionChange(_hives);
     }
 
     public void Dispose()

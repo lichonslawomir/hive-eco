@@ -1,4 +1,5 @@
-﻿using Core.App.Handlers;
+﻿using BeeHive.Contract.Interfaces;
+using Core.App.Handlers;
 using Core.Contract;
 using Hive.Gateway.Service.Services;
 
@@ -10,7 +11,7 @@ public class RefreshAppStateCommand : ICommand
     public bool GraphDataChange { get; set; }
 }
 
-public sealed class RefreshAppStateCommandhandler(AppState appState) : ICommandAsyncHandler<RefreshAppStateCommand>
+public sealed class RefreshAppStateCommandhandler(IAppState appState) : ICommandAsyncHandler<RefreshAppStateCommand>
 {
     public int Order => 0;
 
@@ -22,8 +23,8 @@ public sealed class RefreshAppStateCommandhandler(AppState appState) : ICommandA
     public async Task HandleCommand(RefreshAppStateCommand cmd, CancellationToken cancellationToken)
     {
         if (cmd.RefreshAppState)
-            await appState.NotifyTimeSeriesAdded();
+            await ((AppState)appState).NotifyTimeSeriesAdded();
         if (cmd.GraphDataChange)
-            await appState.NotifyGraphDataChange();
+            await ((AppState)appState).NotifyGraphDataChange();
     }
 }

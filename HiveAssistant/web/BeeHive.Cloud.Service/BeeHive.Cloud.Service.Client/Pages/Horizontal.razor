@@ -1,0 +1,41 @@
+﻿@page "/weather"
+@using ChartJs.Blazor
+@using ChartJs.Blazor.BarChart
+@using ChartJs.Blazor.Common
+@using ChartJs.Blazor.Common.Enums
+@using ChartJs.Blazor.Util
+
+@rendermode InteractiveWebAssembly
+
+<title>WWWW</title>
+<h1>WWWW</h1>
+<Chart Config="@_barConfig" />
+
+@code {
+    private BarConfig _barConfig = null!;
+
+    protected override void OnInitialized()
+    {
+        _barConfig = new BarConfig
+        {
+            Options = new BarOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Sample Bar Chart"
+                }
+            }
+        };
+
+        var dataset = new BarDataset<int>(new List<int> { 12, 19, 3, 5, 2, 3 })
+        {
+            Label = "Votes",
+            BackgroundColor = new[] { ColorUtil.FromDrawingColor(System.Drawing.Color.Blue) }
+        };
+
+        ((List<string>)_barConfig.Data.Labels).AddRange(new[] { "Red", "Blue", "Yellow", "Green", "Purple", "Orange" });
+        _barConfig.Data.Datasets.Add(dataset);
+    }
+}

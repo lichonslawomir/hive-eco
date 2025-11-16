@@ -3,7 +3,7 @@ using BeeHive.Domain.Data;
 
 namespace BeeHive.Contract.Aggregate.Models;
 
-public class TimeAggregateSeriesDataModelEx
+public struct TimeAggregateSeriesDataModelEx
 {
     public required int HiveId { get; init; }
     public required TimeSeriesKind Kind { get; init; }
@@ -12,10 +12,10 @@ public class TimeAggregateSeriesDataModelEx
     public DateTimeOffset Timestamp { get; init; }
 
     public required int Count { get; init; }
-    public required float? MaxValue { get; init; }
-    public required float? MinValue { get; init; }
-    public required float? AvgValue { get; init; }
-    public required float? MedValue { get; init; }
+    public float? MaxValue { get; init; }
+    public float? MinValue { get; init; }
+    public float? AvgValue { get; init; }
+    public float? MedValue { get; init; }
 
     public DateTimeOffset CreatedOrUpdatedDate { get; init; }
 }

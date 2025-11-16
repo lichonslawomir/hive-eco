@@ -41,6 +41,8 @@ public sealed class TimeAggregateSeries : AggregateRoot<int>
             MedValue = medValue
         };
 
+        LasteAggregateTime = timeAggregateSeriesData.Timestamp;
+
         PublishEvent(new UpdateTimeAggregateSeriesDataEvent(this, timestamp));
 
         return timeAggregateSeriesData;
@@ -54,6 +56,8 @@ public sealed class TimeAggregateSeries : AggregateRoot<int>
         timeAggregateSeriesData.MinValue = minValue;
         timeAggregateSeriesData.AvgValue = avgValue;
         timeAggregateSeriesData.MedValue = medValue;
+
+        LasteAggregateTime = timeAggregateSeriesData.Timestamp;
 
         PublishEvent(new UpdateTimeAggregateSeriesDataEvent(this, timeAggregateSeriesData.Timestamp));
     }
@@ -72,6 +76,8 @@ public sealed class TimeAggregateSeries : AggregateRoot<int>
             AmplitudeMav = amplitudeMav
         };
 
+        LasteAggregateTime = audioAggregateStatsData.Timestamp;
+
         PublishEvent(new UpdateAudioAggregateStatsDataEvent(this, timestamp));
 
         return audioAggregateStatsData;
@@ -85,6 +91,8 @@ public sealed class TimeAggregateSeries : AggregateRoot<int>
         audioAggregateStatsData.AmplitudePeak = amplitudePeak;
         audioAggregateStatsData.AmplitudeRms = amplitudeRms;
         audioAggregateStatsData.AmplitudeMav = amplitudeMav;
+
+        LasteAggregateTime = audioAggregateStatsData.Timestamp;
 
         PublishEvent(new UpdateAudioAggregateStatsDataEvent(this, audioAggregateStatsData.Timestamp));
     }

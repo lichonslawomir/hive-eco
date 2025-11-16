@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0-rc.2.25502.107" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BeeHive.Contract\BeeHive.Contract.csproj" />
+    <ProjectReference Include="..\..\BeeHive.Domain\BeeHive.Domain.csproj" />
+    <ProjectReference Include="..\..\Core.App\Core.App.csproj" />
+    <ProjectReference Include="..\..\Core.Contract\Core.Contract.csproj" />
+    <ProjectReference Include="..\..\BeeHive.App\BeeHive.App.csproj" />
+    <ProjectReference Include="..\..\BeeHive.Infra\BeeHive.Infra.csproj" />
+    <ProjectReference Include="..\BeeHive.Cloud.Service.Client\BeeHive.Cloud.Service.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Pcm" />
+    <Folder Include="logs\" />
+  </ItemGroup>
+
+</Project>

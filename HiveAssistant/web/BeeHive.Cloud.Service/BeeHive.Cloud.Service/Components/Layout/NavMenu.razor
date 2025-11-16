@@ -1,0 +1,55 @@
+﻿@using BeeHive.Contract.Hives.Models
+@using BeeHive.Contract.Interfaces
+
+@inject IHiveService HiveService
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Hive guardian</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Temperature
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="audio" Match="NavLinkMatch.All">
+                <span class="bi bi-bee-buzz-nav-menu" aria-hidden="true"></span> Audio
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="hives-editor">
+                <span class="bi bi-hive-list-nav-menu" aria-hidden="true"></span> Hives
+            </NavLink>
+            @foreach (var hive in _hives)
+            {
+                <NavLink class="nav-link" href="@($"/hive/{hive.Id}")">
+                    <span class="bi" aria-hidden="true"></span> @hive.Name
+                </NavLink>
+            }
+        </div>
+    </nav>
+</div>
+
+@code {
+
+    private IList<HiveDto> _hives = new List<HiveDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hives = await HiveService.ListHives();
+    }
+    private async Task HandleChange(IList<HiveDto> hives)
+    {
+        _hives = hives;
+        await InvokeAsync(StateHasChanged);
+    }
+}

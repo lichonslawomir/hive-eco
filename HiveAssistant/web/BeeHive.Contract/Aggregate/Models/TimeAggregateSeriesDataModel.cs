@@ -1,11 +1,11 @@
 ﻿namespace BeeHive.Contract.Aggregate.Models;
 
-public class TimeAggregateSeriesDataModel
+public struct TimeAggregateSeriesDataModel
 {
     public required DateTimeOffset Timestamp { get; init; }
     public required int Count { get; init; }
-    public required float? MaxValue { get; init; }
-    public required float? MinValue { get; init; }
-    public required float? AvgValue { get; init; }
-    public required float? MedValue { get; init; }
+    public float? MaxValue { get; init; }
+    public float? MinValue { get; init; }
+    public float? AvgValue { get; init; }
+    public float? MedValue { get; init; }
 }

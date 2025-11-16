@@ -31,10 +31,9 @@ void setup() {
    pinMode(22, INPUT);
    Serial.begin(921600);
    i2s_driver_install(i2s_num, &i2s_config, 0, NULL);   //install and start i2s driver
-   REG_SET_BIT(  I2S_TIMING_REG(i2s_num),BIT(9));   /*  #include "soc/i2s_reg.h"   I2S_NUM -> 0 or 1*/
+   REG_SET_BIT( I2S_TIMING_REG(i2s_num), BIT(9));   /*  #include "soc/i2s_reg.h"   I2S_NUM -> 0 or 1*/
    REG_SET_BIT( I2S_CONF_REG(i2s_num), I2S_RX_MSB_SHIFT);
    i2s_set_pin(i2s_num, &pin_config);
-   Serial.print("H1");
 }
 
 int32_t audio_buf[BUFLEN];
@@ -44,13 +43,13 @@ const char hiveId = '1';
 unsigned long lastSendMillis = 0;
 const unsigned long sendIntervalMillis = 1000 * 10;
 void loop() {
-  //size_t bytes_read = 0;
-  //i2s_read(i2s_num, (void **)audio_buf, sizeof(int32_t) * 256, &bytes_read, portMAX_DELAY);
+  size_t bytes_read = 0;
+  i2s_read(i2s_num, (void **)audio_buf, sizeof(int32_t) * 256, &bytes_read, portMAX_DELAY);
   
-  //sprintf(cmd, "A%c %d ", hiveId, bytes_read);
-  //Serial.print(cmd);
-  //Serial.write((uint8_t*)audio_buf, bytes_read);
-  //Serial.print("C");
+  sprintf(cmd, "A%c %d ", hiveId, bytes_read);
+  Serial.print(cmd);
+  Serial.write((uint8_t*)audio_buf, bytes_read);
+  Serial.print("C");
 
   if (millis() - lastSendMillis >= sendIntervalMillis) {
     Serial.println("H");

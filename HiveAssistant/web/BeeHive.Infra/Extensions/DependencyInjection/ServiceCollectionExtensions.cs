@@ -25,8 +25,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<IDatabaseInitializer, DatabaseInitializer>()
             .AddScoped<IStorageManager, StorageManager>()
             .AddBeeHiveDbContext(configuration)
-            .AddRepositories()
-            .AddJobs();
+            .AddRepositories();
     }
 
     public static IServiceCollection AddBeeHiveDbContext(this IServiceCollection services, IConfiguration configuration)

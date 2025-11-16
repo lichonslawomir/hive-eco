@@ -37,15 +37,15 @@ public static class GenericRepositoryExtensions
 {
     public static Task<PageResult<TDto>> GetPagedAsync<T, TDto>(this IGenericRepository<T> repo,
         IMapSpecification<T, TDto> specification,
-        int? take,
         int? skip,
+        int? take,
         CancellationToken cancellationToken)
         where T : class
     {
         var s = new PagedSpecificationWrapper<T, TDto>(specification)
         {
-            Take = take,
             Skip = skip,
+            Take = take
         };
         return repo.GetPagedAsync(s, cancellationToken);
     }

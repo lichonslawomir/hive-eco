@@ -42,4 +42,13 @@ public sealed class TimeSeries : AggregateRoot<int>
         PublishEvent(new AddTimeSeriesDataEvent(this, 1));
         return d;
     }
+
+    public void UpdateData(TimeSeriesData timeSeriesData, float vale)
+    {
+        if (timeSeriesData.Value != vale)
+        {
+            timeSeriesData.Value = vale;
+            PublishEvent(new AddTimeSeriesDataEvent(this, 1));
+        }
+    }
 }

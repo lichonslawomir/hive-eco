@@ -1,9 +1,10 @@
-﻿using BeeHive.App;
+﻿using BeeHive.Contract.Interfaces;
+using BeeHive.Infra.Services;
+using Core.App.Extensions;
 using Core.Infra.Schedule.Extensioms.DependencyInjection;
 using Hive.Gateway.Service.Export;
 using Hive.Gateway.Service.SerialPortSensores;
 using Hive.Gateway.Service.Services;
-using Core.App.Extensions;
 
 namespace Hive.Gateway.Service.Extensions;
 
@@ -28,7 +29,7 @@ public static class ServiceCollectionExtensions
             .RunJob<SensoreJob>(SensoreJob.DefaultExecuteConfig)
 
             .AddSingleton<ISensorBuffor, SensorBuffor>()
-            .AddSingleton<AppState>()
+            .AddSingleton<IAppState, AppState>()
             .AddScoped<IScopeService, ScopeService>()
             .AddScoped<IHiveService, HiveService>()
             .AddScoped<IHiveMediaService, HiveMediaService>()

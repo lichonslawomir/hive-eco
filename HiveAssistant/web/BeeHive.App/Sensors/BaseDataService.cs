@@ -89,13 +89,13 @@ public class BaseDataService
         return (aggregateSeries, newRecord);
     }
 
-    public async Task<TimeAggregateSeriesData?> GetAggregateData(DateTimeOffset ts, TimeAggregateSeries aggregateSeries, bool newAggregateSeries, CancellationToken cancelationToken)
+    public async Task<TimeAggregateSeriesData?> GetAggregateData(DateTime ts, TimeAggregateSeries aggregateSeries, bool newAggregateSeries, CancellationToken cancelationToken)
     {
         return newAggregateSeries ? null :
             await _beeHiveDbContext.TimeAggregateSeriesData.FirstOrDefaultAsync(x => x.Timestamp == ts && x.TimeAggregateSeriesId == aggregateSeries.Id, cancelationToken);
     }
 
-    public async Task<TimeSeriesData?> GetSeriesData(DateTimeOffset ts, TimeSeries timeSeries, bool newTimeSeries, CancellationToken cancelationToken)
+    public async Task<TimeSeriesData?> GetSeriesData(DateTime ts, TimeSeries timeSeries, bool newTimeSeries, CancellationToken cancelationToken)
     {
         return newTimeSeries ? null :
             await _beeHiveDbContext.TimeSeriesData.FirstOrDefaultAsync(x => x.Timestamp == ts && x.TimeSeriesId == timeSeries.Id, cancelationToken);

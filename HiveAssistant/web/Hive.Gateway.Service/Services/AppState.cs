@@ -1,9 +1,9 @@
 ﻿using BeeHive.Contract.Hives.Models;
-using Core.App.DataAccess;
+using BeeHive.Contract.Interfaces;
 
 namespace Hive.Gateway.Service.Services;
 
-public class AppState
+public class AppState : IAppState
 {
     public event Func<IList<HiveDto>, Task>? OnHiveCollectionChange;
 
@@ -48,5 +48,10 @@ public class AppState
             var handler = (Func<Task>)@delegate;
             await handler().ConfigureAwait(true);
         }
+    }
+
+    public ValueTask StartListeningAsync()
+    {
+        return ValueTask.CompletedTask;
     }
 }
