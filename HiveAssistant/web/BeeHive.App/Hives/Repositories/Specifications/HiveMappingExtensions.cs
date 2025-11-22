@@ -15,6 +15,7 @@ public static class HiveMappingExtensions
             UniqueKey = e.UniqueKey,
             ComPort = e.ComPort,
             LastComPortUsed = e.LastComPortUsed,
+            GraphColor = e.GraphColor,
             AudioSensorBitsPerSample = e.AudioSensorBitsPerSample,
             AudioSensorChannels = e.AudioSensorChannels,
             AudioSensorSampleRate = e.AudioSensorSampleRate
@@ -28,6 +29,7 @@ public static class HiveMappingExtensions
         UniqueKey = e.UniqueKey,
         ComPort = e.ComPort,
         LastComPortUsed = e.LastComPortUsed,
+        GraphColor = e.GraphColor,
         AudioSensorBitsPerSample = e.AudioSensorBitsPerSample,
         AudioSensorChannels = e.AudioSensorChannels,
         AudioSensorSampleRate = e.AudioSensorSampleRate

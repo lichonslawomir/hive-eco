@@ -1,4 +1,5 @@
-﻿using BeeHive.Domain.BeeGardens;
+﻿using System.Drawing;
+using BeeHive.Domain.BeeGardens;
 using BeeHive.Domain.Hives.Audio;
 using BeeHive.Domain.Hives.Events;
 using Core.Domain.Aggregates;
@@ -17,6 +18,9 @@ public sealed class Hive : AuditableAggregateRoot<int, string>, ISynchronizableE
 
     public string? ComPort { get; private set; }
     public string? LastComPortUsed { get; private set; }
+
+    public int GraphColor { get; private set; } = Color.Blue.ToArgb();
+
     public int AudioSensorSampleRate { get; private set; } = 16000;
     public int AudioSensorChannels { get; private set; } = 1;
     public int AudioSensorBitsPerSample { get; private set; } = 16;
@@ -99,22 +103,24 @@ public sealed class Hive : AuditableAggregateRoot<int, string>, ISynchronizableE
         return media;
     }
 
-    public void Update(string name, string uniqueKey, string comPort, int audioSensorSampleRate, int audioSensorChannels, int audioSensorBitsPerSample)
+    public void Update(string name, string uniqueKey, string comPort, int graphColor, int audioSensorSampleRate, int audioSensorChannels, int audioSensorBitsPerSample)
     {
         Name = name;
         UniqueKey = uniqueKey;
 
         ComPort = comPort;
+        GraphColor = graphColor;
 
         AudioSensorSampleRate = audioSensorSampleRate;
         AudioSensorChannels = audioSensorChannels;
         AudioSensorBitsPerSample = audioSensorBitsPerSample;
     }
 
-    public void Update(string name, string? comPort, int audioSensorSampleRate, int audioSensorChannels, int audioSensorBitsPerSample)
+    public void Update(string name, string? comPort, int graphColor, int audioSensorSampleRate, int audioSensorChannels, int audioSensorBitsPerSample)
     {
         Name = name;
         ComPort = comPort;
+        GraphColor = graphColor;
 
         AudioSensorSampleRate = audioSensorSampleRate;
         AudioSensorChannels = audioSensorChannels;

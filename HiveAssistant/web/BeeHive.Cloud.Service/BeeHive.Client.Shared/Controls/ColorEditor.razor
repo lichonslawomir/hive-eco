@@ -1,0 +1,104 @@
+﻿@using Microsoft.AspNetCore.Components
+
+<div class="color-editor-row">
+    <input type="color" @bind="ColorHex" />
+    <input type="text" @bind="ColorHex" maxlength="7" style="width:80px" />
+    <label>R:<input type="number" min="0" max="255" @bind="R" style="width:40px;margin-left:4px;margin-right:8px" /></label>
+    <label>G:<input type="number" min="0" max="255" @bind="G" style="width:40px;margin-left:4px;margin-right:8px" /></label>
+    <label>B:<input type="number" min="0" max="255" @bind="B" style="width:40px;margin-left:4px;margin-right:8px" /></label>
+</div>
+
+@code {
+    [Parameter]
+    public int? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<int> ValueChanged { get; set; }
+
+    private string ColorHex
+    {
+        get => $"#{R:X2}{G:X2}{B:X2}";
+        set
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                var hex = value.StartsWith("#") ? value.Substring(1) : value;
+                if (hex.Length == 6 &&
+                    int.TryParse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber, null, out var r) &&
+                    int.TryParse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber, null, out var g) &&
+                    int.TryParse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber, null, out var b))
+                {
+                    if (R != r || G != g || B != b)
+                    {
+                        R = r; G = g; B = b;
+                        UpdateValueFromRgb();
+                    }
+                }
+            }
+        }
+    }
+
+    private int _r, _g, _b;
+    private int R
+    {
+        get => _r;
+        set
+        {
+            if (_r != value)
+            {
+                _r = Clamp(value);
+                UpdateValueFromRgb();
+            }
+        }
+    }
+    private int G
+    {
+        get => _g;
+        set
+        {
+            if (_g != value)
+            {
+                _g = Clamp(value);
+                UpdateValueFromRgb();
+            }
+        }
+    }
+    private int B
+    {
+        get => _b;
+        set
+        {
+            if (_b != value)
+            {
+                _b = Clamp(value);
+                UpdateValueFromRgb();
+            }
+        }
+    }
+
+    private void UpdateValueFromRgb()
+    {
+        var colorInt = (R << 16) | (G << 8) | B;
+        if (colorInt != Value)
+        {
+            Value = colorInt;
+            ValueChanged.InvokeAsync(colorInt);
+        }
+    }
+
+    private void UpdateRgbFromValue()
+    {
+        _r = ((Value ?? 0) >> 16) & 0xFF;
+        _g = ((Value ?? 0) >> 8) & 0xFF;
+        _b = (Value ?? 0) & 0xFF;
+    }
+
+    private int Clamp(int val) => Math.Max(0, Math.Min(255, val));
+
+    protected override void OnParametersSet()
+    {
+        UpdateRgbFromValue();
+    }
+
+    private int CurrentColorInt => (R << 16) | (G << 8) | B;
+}

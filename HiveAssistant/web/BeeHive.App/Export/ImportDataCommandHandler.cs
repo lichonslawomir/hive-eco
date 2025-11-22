@@ -32,7 +32,7 @@ public class ImportDataCommandHandler : BaseDataExportService, ICommandHandler<I
                 var (hive, newHive) = await GetHive(model.Hive.UniqueKey, beeGarden, newBeeGarden, cancellationToken);
                 if (!newHive)
                 {
-                    hive.Update(model.Hive.Name, model.Hive.ComPort, model.Hive.AudioSensorSampleRate, model.Hive.AudioSensorChannels, model.Hive.AudioSensorBitsPerSample);
+                    hive.Update(model.Hive.Name, model.Hive.ComPort, model.Hive.GraphColor, model.Hive.AudioSensorSampleRate, model.Hive.AudioSensorChannels, model.Hive.AudioSensorBitsPerSample);
                 }
 
                 var (state, _) = await GetExportState(Domain.BeeGardens.ExportEntity.Hive, beeGarden, newBeeGarden, cancellationToken);

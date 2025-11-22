@@ -2,6 +2,7 @@
 using BeeHive.Infra.DataAccess.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BeeHive.Infra.DataAccess.Migrations
 {
     [DbContext(typeof(BeeHiveDbContext))]
-    partial class BeeHiveDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251122100117_GraphColor")]
+    partial class GraphColor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");

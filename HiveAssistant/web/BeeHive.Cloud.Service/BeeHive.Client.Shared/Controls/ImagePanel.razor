@@ -50,10 +50,10 @@
     private bool FullPopupVisible { get; set; } = false;
     private string EditedTitle { get; set; } = string.Empty;
 
-    private void OnDeleteClick()
+    private async Task OnDeleteClick()
     {
         DeletePopupVisible = false;
-        OnDelete.InvokeAsync(Media);
+        await OnDelete.InvokeAsync(Media);
     }
 
     private void ShowEditPopup()
@@ -62,9 +62,9 @@
         EditPopupVisible = true;
     }
 
-    private void SaveEdit()
+    private async Task SaveEdit()
     {
-        OnEditTitle.InvokeAsync((Media, EditedTitle));
+        await OnEditTitle.InvokeAsync((Media, EditedTitle));
         EditPopupVisible = false;
     }
 

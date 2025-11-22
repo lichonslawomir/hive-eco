@@ -11,7 +11,7 @@ public sealed class UpdateHiveCommandHandler(IHiveRepository hiveRepository) : I
         var hive = await hiveRepository.GetByIdAsync(cmd.Id, cancellationToken);
         if (hive is not null)
         {
-            hive.Update(cmd.Data.Name, cmd.Data.UniqueKey, cmd.Data.ComPort,
+            hive.Update(cmd.Data.Name, cmd.Data.UniqueKey, cmd.Data.ComPort, cmd.Data.GraphColor,
                 cmd.Data.AudioSensorSampleRate,
                 cmd.Data.AudioSensorChannels,
                 cmd.Data.AudioSensorBitsPerSample);

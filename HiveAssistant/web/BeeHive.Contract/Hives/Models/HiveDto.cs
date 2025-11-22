@@ -8,6 +8,8 @@ public struct HiveDto
     public required string? ComPort { get; init; }
     public required string? LastComPortUsed { get; init; }
 
+    public required int GraphColor { get; init; }
+
     public required int AudioSensorSampleRate { get; init; }
     public required int AudioSensorChannels { get; init; }
     public required int AudioSensorBitsPerSample { get; init; }

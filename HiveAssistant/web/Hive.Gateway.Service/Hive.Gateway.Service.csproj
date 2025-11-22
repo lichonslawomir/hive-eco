@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
     <PackageReference Include="CloudinaryDotNet" Version="1.27.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.9" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.9" />
@@ -18,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BeeHive.Cloud.Service\BeeHive.Client.Shared\BeeHive.Client.Shared.csproj" />
     <ProjectReference Include="..\BeeHive.Contract\BeeHive.Contract.csproj" />
     <ProjectReference Include="..\BeeHive.Domain\BeeHive.Domain.csproj" />
     <ProjectReference Include="..\BeeHive.Infra\BeeHive.Infra.csproj" />
@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\Controls\" />
     <Folder Include="Data\Pcm" />
     <Folder Include="logs\" />
   </ItemGroup>

@@ -1,0 +1,66 @@
+﻿@using BeeHive.Domain.Aggregate
+
+<div class="param-panel">
+    <label>
+        Period:
+        <select id="periodSelect" @onchange="OnPeriodChanged">
+            @foreach (var periodDesc in Periods)
+            {
+                <option value="@periodDesc.Value" selected="@(periodDesc.Value == Period)">@periodDesc.Label</option>
+            }
+        </select>
+    </label>
+    <label>Start: <input type="datetime-local" value="@FormatValue(StartDate)" @onchange="HandleStartDateChange"></label>
+    <label>End: <input type="datetime-local" value="@FormatValue(EndDate)" @onchange="HandleEndDateChange"></label>
+    <button @onclick="LoadDataClick">Load Data</button>
+</div>
+
+@code {
+    [Parameter] public AggregationPeriod Period { get; set; }
+    //[Parameter] public EventCallback<AggregationPeriod> PeriodChanged { get; set; }
+
+    [Parameter] public DateTimeOffset StartDate { get; set; }
+    //[Parameter] public EventCallback<DateTimeOffset> StartDateChanged { get; set; }
+
+    [Parameter] public DateTimeOffset EndDate { get; set; }
+    //[Parameter] public EventCallback<DateTimeOffset> EndDateChanged { get; set; }
+
+    [Parameter] public EventCallback<(AggregationPeriod period, DateTimeOffset startDate, DateTimeOffset endDate)> ParamChanged { get; set; }
+    [Parameter] public required EventCallback OnLoadData { get; set; }
+    
+    private List<(AggregationPeriod Value, string Label)> Periods = new()
+    {
+        (AggregationPeriod.Min5, "5 min"),
+        (AggregationPeriod.Min15, "15 min"),
+        (AggregationPeriod.Hour, "Hour"),
+        (AggregationPeriod.Day, "Day"),
+        (AggregationPeriod.Week, "Week"),
+        (AggregationPeriod.Month, "Month"),
+    };
+
+    private async Task OnPeriodChanged(ChangeEventArgs e)
+    {
+        if(Enum.TryParse<BeeHive.Domain.Aggregate.AggregationPeriod>(e.Value?.ToString() ?? "Min5", true, out var period))
+            await ParamChanged.InvokeAsync((period, StartDate, EndDate));
+            //await PeriodChanged.InvokeAsync(period);
+    }
+    private async Task HandleStartDateChange(ChangeEventArgs e)
+    {
+        if (DateTime.TryParse(e.Value?.ToString(), out var dt))
+            await ParamChanged.InvokeAsync((Period, dt, EndDate));
+            //await StartDateChanged.InvokeAsync(dt);
+    }
+    private async Task HandleEndDateChange(ChangeEventArgs e)
+    {
+        if (DateTime.TryParse(e.Value?.ToString(), out var dt))
+            await ParamChanged.InvokeAsync((Period, StartDate, dt));
+            //await EndDateChanged.InvokeAsync(dt);
+    }
+    private void LoadDataClick()
+    {
+        OnLoadData.InvokeAsync();
+    }
+
+    private string? FormatValue(DateTimeOffset? value)
+        => value.HasValue ? value.Value.LocalDateTime.ToString("yyyy-MM-ddTHH:mm") : null;
+}

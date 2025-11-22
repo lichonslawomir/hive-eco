@@ -2,6 +2,8 @@
 @using BeeHive.Contract.Aggregate.Models
 @using BeeHive.Contract.Data.Models
 @using BeeHive.Contract.Hives.Models
+@using BeeHive.Client.Shared.Controls
+@using BeeHive.Client.Shared.Components
 @using BeeHive.Domain.Aggregate
 @using BeeHive.Domain.Data
 
@@ -10,87 +12,41 @@
 @inject IHiveService HiveService
 @inject IScopeService ScopeService
 @inject IAppState AppState
-@inject IJSRuntime JS
 
 @implements IDisposable
 
 <PageTitle>Home</PageTitle>
-
-<div class="param-panel">
-    <label>Period: 
-        <select id="periodSelect" @onchange="OnPeriodChanged">
-            @foreach (var periodDesc in Periods)
-            {
-                <option value="@periodDesc.Value" selected="@(periodDesc.Value == period)">@periodDesc.Label</option>
-            }
-        </select>
-    </label>
-    <label>Start: <input type="datetime-local" @bind="startDate" /></label>
-    <label>End: <input type="datetime-local" @bind="endDate" /></label>
-    <button @onclick="LoadGraphs">Load Data</button>
-</div>
-
-<div class="graphs-container" style="display: flex; gap: 2rem; flex-wrap: wrap;">
-    <div style="flex: 1; min-width: 400px;">
-        <h4>Temperature</h4>
-        <Chart Config="temperatureLineChartConfig" @ref="_chart1"></Chart>
-        @foreach (var hive in _hiveTemps)
-        {
-            <span>@hive.name: @(hive.data is null ? "???" : hive.data.Value.Value.ToString("F2")) (@(hive.data is null ? "" : hive.data.Value.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm")))</span>
-            <br />
-        }
-    </div>
-    <div style="flex: 1; min-width: 400px;">
-        <h4>Humidity</h4>
-        <Chart Config="humidityLineChartConfig" @ref="_chart2"></Chart>
-        @foreach (var hive in _hiveHums)
-        {
-            <span>@hive.name: @(hive.data is null ? "???" : hive.data.Value.Value.ToString("P2")) (@(hive.data is null ? "" : hive.data.Value.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm")))</span>
-            <br/>
-        }
-    </div>
-</div>
+<PeriodSelector Period="period" StartDate="startDate" EndDate="endDate" OnLoadData="LoadAggregateData" ParamChanged="PeriodChanged"/>
+<MainGraph Hives="_hives"
+    TemperatureAggregateData="_temperatureAggregateData"
+    HumidityAggregateData="_humidityAggregateData"
+    TemperatureData="_temperatureData"
+    HumidityData="_humidityData" />
 
 @code {
     private IList<HiveDto> _hives = new List<HiveDto>();
-    private IList<(string name, TimeSeriesDataModel? data)> _hiveTemps = new List<(string name, TimeSeriesDataModel? data)>();
-    private IList<(string name, TimeSeriesDataModel? data)> _hiveHums = new List<(string name, TimeSeriesDataModel? data)>();
-    private Chart _chart1;
-    private Chart _chart2;
+
+    private IList<TimeAggregateSeriesHivesDataModel> _temperatureAggregateData = new List<TimeAggregateSeriesHivesDataModel>();
+    private IList<TimeAggregateSeriesHivesDataModel> _humidityAggregateData = new List<TimeAggregateSeriesHivesDataModel>();
+
+    private IList<(string name, TimeSeriesDataModel? data)> _temperatureData = new List<(string name, TimeSeriesDataModel? data)>();
+    private IList<(string name, TimeSeriesDataModel? data)> _humidityData = new List<(string name, TimeSeriesDataModel? data)>();
 
     BeeHive.Domain.Aggregate.AggregationPeriod period = BeeHive.Domain.Aggregate.AggregationPeriod.Min5;
     private DateTimeOffset startDate = DateTimeOffset.Now.Date;
     private DateTimeOffset endDate = DateTimeOffset.Now.Date.AddDays(1).AddTicks(-1); // End of today
-    private List<TimeAggregateSeriesDataModel>[] temperatureDataPoints = Array.Empty<List<TimeAggregateSeriesDataModel>>();
-    private List<TimeAggregateSeriesDataModel>[] humidityDataPoints = Array.Empty<List<TimeAggregateSeriesDataModel>>();
-    LineConfig temperatureLineChartConfig = new LineConfig();
-    LineConfig humidityLineChartConfig = new LineConfig();
-
-    private List<(AggregationPeriod Value, string Label)> Periods = new()
-    {
-        (AggregationPeriod.Min5, "5 min"),
-        (AggregationPeriod.Min15, "15 min"),
-        (AggregationPeriod.Hour, "Hour"),
-        (AggregationPeriod.Day, "Day"),
-        (AggregationPeriod.Week, "Week"),
-        (AggregationPeriod.Month, "Month"),
-    };
-
-    private Task OnPeriodChanged(ChangeEventArgs e)
-    {
-        Enum.TryParse<BeeHive.Domain.Aggregate.AggregationPeriod>(e.Value?.ToString() ?? "Min5", true, out period);
-        return Task.CompletedTask;
-    }
 
     protected override async Task OnInitializedAsync()
     {
         _hives = await HiveService.ListHives();
-        temperatureDataPoints = _hives.Select(x => new List<TimeAggregateSeriesDataModel>()).ToArray();
-        humidityDataPoints = _hives.Select(x => new List<TimeAggregateSeriesDataModel>()).ToArray();
 
         AppState.OnGraphDataChange += HandleGraphDataChange;
         AppState.OnTimeSeriesAdded += HandleTimeSeriesAdded;
-        await LoadGraphs(HiveService);
+        await AppState.StartListeningAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadAggregateData(HiveService);
         await LoadLastData(HiveService);
         await AppState.StartListeningAsync();
     }
@@ -99,11 +55,18 @@
         AppState.OnGraphDataChange -= HandleGraphDataChange;
         AppState.OnTimeSeriesAdded -= HandleTimeSeriesAdded;
     }
+    private Task PeriodChanged((AggregationPeriod period, DateTimeOffset startDate, DateTimeOffset endDate) args)
+    {
+        period = args.period;
+        startDate = args.startDate;
+        endDate = args.endDate;
+        return Task.CompletedTask;
+    }
     private Task HandleGraphDataChange()
     {
         return ScopeService.RunInScope<IHiveService>(async hiveService =>
         {
-            await LoadGraphs(hiveService);
+            await LoadAggregateData(hiveService);
             await InvokeAsync(StateHasChanged);
         });
     }
@@ -118,85 +81,23 @@
 
     private async Task LoadLastData(IHiveService hiveService)
     {
-        _hiveHums.Clear();
-        _hiveTemps.Clear();
+        _temperatureData = new List<(string name, TimeSeriesDataModel? data)>();
+        _humidityData = new List<(string name, TimeSeriesDataModel? data)>();
         for (int i = 0; i < _hives.Count; ++i)
         {
-            _hiveHums.Add((_hives[i].Name, await hiveService.GetHiveLastData(_hives[i].Id, BeeHive.Domain.Data.TimeSeriesKind.Humidity)));
-            _hiveTemps.Add((_hives[i].Name, await hiveService.GetHiveLastData(_hives[i].Id, BeeHive.Domain.Data.TimeSeriesKind.Temperature)));
+            _humidityData.Add((_hives[i].Name, await hiveService.GetHiveLastData(_hives[i].Id, BeeHive.Domain.Data.TimeSeriesKind.Humidity)));
+            _temperatureData.Add((_hives[i].Name, await hiveService.GetHiveLastData(_hives[i].Id, BeeHive.Domain.Data.TimeSeriesKind.Temperature)));
         }
     }
-    private Task LoadGraphs()
+
+    private Task LoadAggregateData()
     {
-		return LoadGraphs(HiveService);
+        return LoadAggregateData(HiveService);
     }
-    private async Task LoadGraphs(IHiveService hiveService)
+    private async Task LoadAggregateData(IHiveService hiveService)
     {
-        IList<TimeAggregateSeriesHivesDataModel> tt;
-        IList<TimeAggregateSeriesHivesDataModel> hh;
-        
         var hiveIds = _hives.Select(x => x.Id).ToArray();
-        tt = await hiveService.GetHivesAggregateData(TimeSeriesKind.Temperature, period, hiveIds, startDate, endDate);
-        hh = await HiveService.GetHivesAggregateData(TimeSeriesKind.Humidity, period, hiveIds, startDate, endDate);
-
-        temperatureLineChartConfig.Data.Labels.Clear();
-        temperatureLineChartConfig.Data.Datasets.Clear();
-        if (tt?.Any() == true)
-        {
-            var labels = tt.Select(dp => dp.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm")).ToArray();
-            ((List<string>)temperatureLineChartConfig.Data.Labels).AddRange(labels);
-            for (int i = 0; i < _hives.Count; ++i)
-            {
-                temperatureLineChartConfig.Data.Datasets.Add(new ChartJs.Blazor.LineChart.LineDataset<float>(tt.Select(dp => dp.MaxValue[i] ?? float.NaN).ToList())
-                    {
-                        Label = $"Max. {_hives[i].Name}",
-                        Fill = ChartJs.Blazor.Common.Enums.FillingMode.Absolute(i * 3 + 1),
-                        BorderColor = "blue"
-                    });
-                temperatureLineChartConfig.Data.Datasets.Add(new ChartJs.Blazor.LineChart.LineDataset<float>(tt.Select(dp => dp.MinValue[i] ?? float.NaN).ToList())
-                    {
-                        Label = $"Min. {_hives[i].Name}",
-                        Fill = ChartJs.Blazor.Common.Enums.FillingMode.Absolute(i * 3),
-                        BorderColor = "blue"
-                    });
-                temperatureLineChartConfig.Data.Datasets.Add(new ChartJs.Blazor.LineChart.LineDataset<float>(tt.Select(dp => dp.AvgValue[i] ?? float.NaN).ToList())
-                    {
-                        Label = $"Avg. {_hives[i].Name}",
-                        Fill = false,
-                        BorderColor = "blue"
-                    });
-            }
-        }
-
-        humidityLineChartConfig.Data.Labels.Clear();
-        humidityLineChartConfig.Data.Datasets.Clear();
-        if (hh?.Any() == true)
-        {
-            var labels = hh.Select(dp => dp.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm")).ToArray();
-            //var labels = hh.Select(dp => dp.Timestamp.ToUniversalTime().ToString("O")).ToArray();
-            //var localLabels = await JS.InvokeAsync<string[]>("formatDatesToLabels", labels, null);
-            ((List<string>)humidityLineChartConfig.Data.Labels).AddRange(labels);
-            for (int i = 0; i < _hives.Count; ++i)
-            {
-                humidityLineChartConfig.Data.Datasets.Add(new ChartJs.Blazor.LineChart.LineDataset<float>(hh.Select(dp => dp.MaxValue[i] ?? float.NaN).ToList())
-                    {
-                        Label = $"Max. {_hives[i].Name}",
-                        Fill = ChartJs.Blazor.Common.Enums.FillingMode.Absolute(i * 3 + 1),
-                        BorderColor = "green"
-                    });
-                humidityLineChartConfig.Data.Datasets.Add(new ChartJs.Blazor.LineChart.LineDataset<float>(hh.Select(dp => dp.MinValue[i] ?? float.NaN).ToList())
-                    {
-                        Label = $"Min. {_hives[i].Name}",
-                        Fill = ChartJs.Blazor.Common.Enums.FillingMode.Absolute(i * 3),
-                        BorderColor = "green"
-                    });
-                humidityLineChartConfig.Data.Datasets.Add(new ChartJs.Blazor.LineChart.LineDataset<float>(hh.Select(dp => dp.AvgValue[i] ?? float.NaN).ToList())
-                    {
-                        Label = $"Avg. {_hives[i].Name}",
-                        Fill = false,
-                        BorderColor = "green"
-                    });
-            }
-        }
+        _temperatureAggregateData = await hiveService.GetHivesAggregateData(TimeSeriesKind.Temperature, period, hiveIds, startDate, endDate);
+        _humidityAggregateData = await HiveService.GetHivesAggregateData(TimeSeriesKind.Humidity, period, hiveIds, startDate, endDate);
     }
 }

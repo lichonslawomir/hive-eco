@@ -1,0 +1,21 @@
+﻿<label class="switch-label" style="align-items:center;">
+    <input type="checkbox" role="switch" class="form-check-input" name="dataset_visibility" checked="@(Visible)"
+           @onchange="() => ToggleVisibility()" />
+    <span class="color-dot"
+          style="background:@(Hive.GraphColor.ToHexColor());">
+    </span>
+    <spna>
+        @Hive.Name
+    </spna>
+</label>
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public HiveDto Hive { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+
+    private async Task ToggleVisibility()
+    {
+        await VisibleChanged.InvokeAsync(!Visible);
+    }
+}

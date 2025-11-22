@@ -1,4 +1,6 @@
 ﻿@page "/hives-editor"
+
+@using BeeHive.Client.Shared.Controls
 @using BeeHive.Contract.Hives.Commands
 @using BeeHive.Contract.Hives.Models
 
@@ -18,6 +20,7 @@
             <th>Id</th>
             <th>Nazwa</th>
             <th>ComPort</th>
+            <th>Kolor</th>
             <th></th>
         </tr>
     </thead>
@@ -29,6 +32,7 @@
                 <td>@hive.UniqueKey</td>
                 <td>@hive.Name</td>
                 <td>@hive.ComPort @(string.IsNullOrEmpty(hive.LastComPortUsed) ? "" : $"(!{hive.LastComPortUsed}!)")</td>
+                <td style="background-color:@($"#{hive.GraphColor:X6}".ToLower())">&nbsp;</td>
                 <td>
                     <button class="btn btn-primary btn-sm" @onclick="() => OpenEditModal(hive)">
                         Edit
@@ -68,6 +72,11 @@
                             <InputText class="form-control" @bind-Value="_editHive.ComPort" />
                             <ValidationMessage For="@(() => _editHive.ComPort)" />
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kolor</label>
+                            <ColorEditor @bind-Value="_editHive.GraphColor" />
+                            <ValidationMessage For="@(() => _editHive.GraphColor)" />
+                        </div>
                         <button type="submit" class="btn btn-success">Save</button>
                         <button type="button" class="btn btn-secondary ms-2" @onclick="CloseModal">Cancel</button>
                     </EditForm>
@@ -91,6 +100,7 @@
             UniqueKey = h.UniqueKey,
             Name = h.Name,
             ComPort = h.ComPort,
+            GraphColor = h.GraphColor,
             AudioSensorSampleRate = h.AudioSensorSampleRate,
             AudioSensorChannels = h.AudioSensorChannels,
             AudioSensorBitsPerSample = h.AudioSensorBitsPerSample
