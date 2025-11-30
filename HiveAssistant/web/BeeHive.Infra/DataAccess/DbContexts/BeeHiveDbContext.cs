@@ -1,4 +1,5 @@
-﻿using BeeHive.App;
+﻿using System.Reflection;
+using BeeHive.App;
 using BeeHive.Domain.Aggregate;
 using BeeHive.Domain.BeeGardens;
 using BeeHive.Domain.Data;
@@ -8,14 +9,18 @@ using BeeHive.Domain.Holdings;
 using Core.App;
 using Core.Infra.DataAccess.DbContexts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace BeeHive.Infra.DataAccess.DbContexts;
 
 public sealed class BeeHiveDbContext : BaseDbContextManuallyVersioned<BeeHiveDbContext, string>, IBeeHiveDbContext
 {
-    public BeeHiveDbContext(DbContextOptions<BeeHiveDbContext> options, IWorkContext workContext)
+    private readonly IBeeHiveDbContextConfigurationProvider _configurationProvider;
+
+    public BeeHiveDbContext(DbContextOptions<BeeHiveDbContext> options, IWorkContext workContext, IBeeHiveDbContextConfigurationProvider configurationProvider)
         : base(options, workContext)
     {
+        _configurationProvider = configurationProvider;
     }
 
     public DbSet<Holding> Holdings { get; set; }
@@ -44,6 +49,6 @@ public sealed class BeeHiveDbContext : BaseDbContextManuallyVersioned<BeeHiveDbC
     {
         base.OnModelCreating(builder);
 
-        builder.ApplyConfigurationsFromAssembly(typeof(BeeHiveDbContext).Assembly);
+        _configurationProvider.ApplyConfiguration(builder);
     }
 }

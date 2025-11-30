@@ -30,14 +30,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _hives = await HiveService.ListHives();
-
         AppState.OnGraphDataChange += HandleGraphDataChange;
         AppState.OnTimeSeriesAdded += HandleTimeSeriesAdded;
         await AppState.StartListeningAsync();
     }
     protected override async Task OnParametersSetAsync()
     {
+        _hives = await HiveService.ListHives();
+
         await LoadAggregateData(HiveService);
         await LoadLastData(HiveService);
         await AppState.StartListeningAsync();
@@ -46,6 +46,13 @@
     {
         AppState.OnGraphDataChange -= HandleGraphDataChange;
         AppState.OnTimeSeriesAdded -= HandleTimeSeriesAdded;
+    }
+    private Task PeriodChanged((AggregationPeriod period, DateTimeOffset startDate, DateTimeOffset endDate) args)
+    {
+        period = args.period;
+        startDate = args.startDate;
+        endDate = args.endDate;
+        return Task.CompletedTask;
     }
     private async Task HandleGraphDataChange()
     {

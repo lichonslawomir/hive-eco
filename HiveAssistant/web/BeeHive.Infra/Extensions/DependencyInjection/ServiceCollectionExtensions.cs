@@ -10,7 +10,6 @@ using BeeHive.Infra.Services;
 using Core.Infra.DataAccess;
 using Core.Infra.Extensions;
 using Core.Infra.Schedule.Extensioms.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,21 +21,8 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddCoreInfraServices<WorkContext, BeeHiveDbContext, string>()
-            .AddScoped<IDatabaseInitializer, DatabaseInitializer>()
             .AddScoped<IStorageManager, StorageManager>()
-            .AddBeeHiveDbContext(configuration)
             .AddRepositories();
-    }
-
-    public static IServiceCollection AddBeeHiveDbContext(this IServiceCollection services, IConfiguration configuration)
-    {
-        var connectionString = configuration.GetConnectionString(nameof(BeeHiveDbContext));
-        services.AddDbContext<BeeHiveDbContext>(options =>
-            options.UseSqlite(connectionString)
-        );
-        services.AddScoped<IBeeHiveDbContext>(provider => provider.GetRequiredService<BeeHiveDbContext>());
-
-        return services;
     }
 
     public static IServiceCollection AddRepositories(this IServiceCollection services)

@@ -19,6 +19,7 @@ public static class MapExportExtensions
             ComPort = e.ComPort,
             GraphColor = e.GraphColor,
             LastComPortUsed = e.LastComPortUsed,
+            SerialBound = e.SerialBound,
             AudioSensorSampleRate = e.AudioSensorSampleRate,
             AudioSensorChannels = e.AudioSensorChannels,
             AudioSensorBitsPerSample = e.AudioSensorBitsPerSample

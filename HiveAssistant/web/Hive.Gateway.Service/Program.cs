@@ -5,6 +5,8 @@ using Core.Infra.Schedule.Extensioms.DependencyInjection;
 using Hive.Gateway.Service.Components;
 using Hive.Gateway.Service.Extensions;
 using Hive.Gateway.Service.Models;
+using BeeHive.Infra.Sqlite.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseWindowsService(opt =>
@@ -24,6 +26,7 @@ builder.Services.AddEndpointsApiExplorer()
 
 builder.Services.AddAppServices()
     .AddInfrastructureServices(builder.Configuration)
+    .AddBeeHiveDbContext(builder.Configuration)
     .Configure<BeeGardenConfig>(builder.Configuration.GetSection(nameof(BeeGardenConfig)))
     .AddHostedService<StartupService>()
     .AddJobSchedule().AddJobs()

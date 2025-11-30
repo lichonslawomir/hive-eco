@@ -4,7 +4,9 @@ using BeeHive.Cloud.Service.Components;
 using BeeHive.Cloud.Service.Extensions;
 using BeeHive.Cloud.Service.Hubs;
 using BeeHive.Infra.Extensions.DependencyInjection;
+using BeeHive.Infra.Postgres.Extensions.DependencyInjection;
 using Core.Infra.Backgrounds;
+using Microsoft.AspNetCore.Components.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAppServices()
     .AddInfrastructureServices(builder.Configuration)
+    .AddBeeHiveDbContext(builder.Configuration)
     .AddHostedService<StartupService>()
     .AddCloudServices(builder.Configuration);
 

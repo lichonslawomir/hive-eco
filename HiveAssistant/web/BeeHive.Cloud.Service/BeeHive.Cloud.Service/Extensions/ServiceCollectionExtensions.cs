@@ -9,8 +9,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCloudServices(this IServiceCollection services, IConfiguration configuration)
     {
-        return services.AddScoped<IHiveService, HiveService>()
-            .AddScoped<IHiveMediaService, HiveMediaService>()
+        return services.AddScopedWithServiceScopeWrappedDecorator<IHiveService, HiveService>()
+            .AddScopedWithServiceScopeWrappedDecorator<IHiveMediaService, HiveMediaService>()
             .AddSingleton<AppState>()
             .AddSingleton<IAppState>(sp => sp.GetRequiredService<AppState>())
             .AddHandlerAssembly<AppState>();

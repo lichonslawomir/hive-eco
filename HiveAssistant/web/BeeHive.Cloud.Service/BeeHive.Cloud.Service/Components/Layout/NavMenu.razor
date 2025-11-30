@@ -5,7 +5,7 @@
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">Hive guardian</a>
+        <a class="navbar-brand" href="">Hive cloud</a>
     </div>
 </div>
 
@@ -43,7 +43,7 @@
 
     private IList<HiveDto> _hives = new List<HiveDto>();
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         _hives = await HiveService.ListHives();
     }

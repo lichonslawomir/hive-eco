@@ -1,0 +1,67 @@
+﻿@page "/audio"
+@using BeeHive.Contract.Aggregate.Models
+@using BeeHive.Contract.Hives.Models
+@using BeeHive.Domain.Aggregate
+
+@rendermode InteractiveAuto
+
+@inject IHiveService HiveService
+@inject IAppState AppState
+
+@implements IDisposable
+
+<PageTitle>Audio</PageTitle>
+<PeriodSelector Period="period" StartDate="startDate" EndDate="endDate" OnLoadData="LoadAggregateData" ParamChanged="PeriodChanged"/>
+<AudioGraph Hives="_hives"
+    FrequenceAggregateData="_frequenceAggregateData"
+    AmplitudeAggregateData="_amplitudeAggregateData" />
+
+@code {
+    private IList<HiveDto> _hives = new List<HiveDto>();
+    
+    private IList<TimeAggregateSeriesHivesDataModel> _frequenceAggregateData = new List<TimeAggregateSeriesHivesDataModel>();
+    private IList<TimeAggregateSeriesHivesDataModel> _amplitudeAggregateData = new List<TimeAggregateSeriesHivesDataModel>();
+
+    BeeHive.Domain.Aggregate.AggregationPeriod period = BeeHive.Domain.Aggregate.AggregationPeriod.Min5;
+    private DateTimeOffset startDate = DateTimeOffset.Now.Date;
+    private DateTimeOffset endDate = DateTimeOffset.Now.Date.AddDays(1).AddTicks(-1); // End of today
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hives = await HiveService.ListHives();
+
+        AppState.OnGraphDataChange += HandleGraphDataChange;
+        await AppState.StartListeningAsync();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadAggregateData(HiveService);
+        await AppState.StartListeningAsync();
+    }
+    public void Dispose()
+    {
+        AppState.OnGraphDataChange -= HandleGraphDataChange;
+    }
+    private Task PeriodChanged((AggregationPeriod period, DateTimeOffset startDate, DateTimeOffset endDate) args)
+    {
+        period = args.period;
+        startDate = args.startDate;
+        endDate = args.endDate;
+        return Task.CompletedTask;
+    }
+    private async Task HandleGraphDataChange()
+    {
+        await LoadAggregateData(HiveService);
+        await InvokeAsync(StateHasChanged);
+    }
+    private Task LoadAggregateData()
+    {
+        return LoadAggregateData(HiveService);
+    }
+    private async Task LoadAggregateData(IHiveService hiveService)
+    {
+        var hiveIds = _hives.Select(x => x.Id).ToArray();
+        _frequenceAggregateData = await HiveService.GetHivesAggregateData(BeeHive.Domain.Data.TimeSeriesKind.BuzzFrequency, period, hiveIds, startDate, endDate);
+        _amplitudeAggregateData = await HiveService.GetHivesAggregateData(BeeHive.Domain.Data.TimeSeriesKind.BuzzAmplitudeRms, period, hiveIds, startDate, endDate);
+    }
+}

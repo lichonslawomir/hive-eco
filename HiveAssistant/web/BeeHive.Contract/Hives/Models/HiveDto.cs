@@ -10,6 +10,7 @@ public struct HiveDto
 
     public required int GraphColor { get; init; }
 
+    public required int SerialBound { get; init; }
     public required int AudioSensorSampleRate { get; init; }
     public required int AudioSensorChannels { get; init; }
     public required int AudioSensorBitsPerSample { get; init; }

@@ -11,7 +11,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0-rc.2.25502.107" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +21,7 @@
     <ProjectReference Include="..\..\Core.Contract\Core.Contract.csproj" />
     <ProjectReference Include="..\..\BeeHive.App\BeeHive.App.csproj" />
     <ProjectReference Include="..\..\BeeHive.Infra\BeeHive.Infra.csproj" />
+	<ProjectReference Include="..\..\BeeHive.Infra.Postgres\BeeHive.Infra.Postgres.csproj" />
     <ProjectReference Include="..\BeeHive.Cloud.Service.Client\BeeHive.Cloud.Service.Client.csproj" />
   </ItemGroup>
 

@@ -1,5 +1,5 @@
-﻿using BeeHive.Infra.DataAccess.DbContexts;
-using BeeHive.Infra.Extensions.DependencyInjection;
+﻿using System.Text.Json;
+using BeeHive.Infra.DataAccess.DbContexts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +9,11 @@ public class BeeHiveDbContextFactory : DesignTimeDbContextFactory<BeeHiveDbConte
 {
     protected override void AddDbContext(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddBeeHiveDbContext(configuration);
+        string? dbType = configuration["DbType"];
+        Console.WriteLine($"db-type: {dbType}");
+        if (dbType == "Sqlite")
+            BeeHive.Infra.Sqlite.Extensions.DependencyInjection.ServiceCollectionExtensions.AddBeeHiveDbContext(services, configuration);
+        if (dbType == "Postgres")
+            BeeHive.Infra.Postgres.Extensions.DependencyInjection.ServiceCollectionExtensions.AddBeeHiveDbContext(services, configuration);
     }
 }

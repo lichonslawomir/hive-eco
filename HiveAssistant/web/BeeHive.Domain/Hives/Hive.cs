@@ -21,6 +21,7 @@ public sealed class Hive : AuditableAggregateRoot<int, string>, ISynchronizableE
 
     public int GraphColor { get; private set; } = Color.Blue.ToArgb();
 
+    public int SerialBound { get; private set; } = 921600;
     public int AudioSensorSampleRate { get; private set; } = 16000;
     public int AudioSensorChannels { get; private set; } = 1;
     public int AudioSensorBitsPerSample { get; private set; } = 16;
@@ -103,7 +104,7 @@ public sealed class Hive : AuditableAggregateRoot<int, string>, ISynchronizableE
         return media;
     }
 
-    public void Update(string name, string uniqueKey, string comPort, int graphColor, int audioSensorSampleRate, int audioSensorChannels, int audioSensorBitsPerSample)
+    public void Update(string name, string uniqueKey, string comPort, int graphColor, int serialBound, int audioSensorSampleRate, int audioSensorChannels, int audioSensorBitsPerSample)
     {
         Name = name;
         UniqueKey = uniqueKey;
@@ -111,17 +112,19 @@ public sealed class Hive : AuditableAggregateRoot<int, string>, ISynchronizableE
         ComPort = comPort;
         GraphColor = graphColor;
 
+        SerialBound = serialBound;
         AudioSensorSampleRate = audioSensorSampleRate;
         AudioSensorChannels = audioSensorChannels;
         AudioSensorBitsPerSample = audioSensorBitsPerSample;
     }
 
-    public void Update(string name, string? comPort, int graphColor, int audioSensorSampleRate, int audioSensorChannels, int audioSensorBitsPerSample)
+    public void Update(string name, string? comPort, int graphColor, int serialBound, int audioSensorSampleRate, int audioSensorChannels, int audioSensorBitsPerSample)
     {
         Name = name;
         ComPort = comPort;
         GraphColor = graphColor;
 
+        SerialBound = serialBound;
         AudioSensorSampleRate = audioSensorSampleRate;
         AudioSensorChannels = audioSensorChannels;
         AudioSensorBitsPerSample = audioSensorBitsPerSample;

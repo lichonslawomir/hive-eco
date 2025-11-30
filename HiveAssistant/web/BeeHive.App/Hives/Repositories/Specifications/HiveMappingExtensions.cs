@@ -16,6 +16,7 @@ public static class HiveMappingExtensions
             ComPort = e.ComPort,
             LastComPortUsed = e.LastComPortUsed,
             GraphColor = e.GraphColor,
+            SerialBound = e.SerialBound,
             AudioSensorBitsPerSample = e.AudioSensorBitsPerSample,
             AudioSensorChannels = e.AudioSensorChannels,
             AudioSensorSampleRate = e.AudioSensorSampleRate
@@ -30,6 +31,7 @@ public static class HiveMappingExtensions
         ComPort = e.ComPort,
         LastComPortUsed = e.LastComPortUsed,
         GraphColor = e.GraphColor,
+        SerialBound = e.SerialBound,
         AudioSensorBitsPerSample = e.AudioSensorBitsPerSample,
         AudioSensorChannels = e.AudioSensorChannels,
         AudioSensorSampleRate = e.AudioSensorSampleRate
